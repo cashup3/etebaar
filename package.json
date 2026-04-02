@@ -1,0 +1,16 @@
+{
+  "name": "eteebaar",
+  "private": true,
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "dev:web": "npm run dev -w web",
+    "dev:api": "npm run dev -w api",
+    "build": "npm run build -ws --if-present",
+    "lint": "npm run lint -ws --if-present"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

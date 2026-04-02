@@ -1,0 +1,135 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String        @id @default(uuid())
+  email        String?       @unique
+  passwordHash String?
+  createdAt    DateTime      @default(now())
+  accounts     Account[]
+  orders       Order[]
+  deposits     Deposit[]
+  withdrawals  Withdrawal[]
+}
+
+/// One row per (user, bucket, asset). Balance is the running total for that bucket.
+model Account {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  /// AVAILABLE | LOCKED
+  kind      String
+  asset     String
+  balance   Decimal  @default(0) @db.Decimal(36, 18)
+  updatedAt DateTime @updatedAt
+
+  ledgerLines LedgerLine[]
+
+  @@unique([userId, kind, asset])
+  @@index([userId])
+}
+
+model LedgerTransaction {
+  id             String   @id @default(uuid())
+  idempotencyKey String?  @unique
+  type           String
+  referenceType  String?
+  referenceId    String?
+  meta           Json?
+  createdAt      DateTime @default(now())
+
+  lines LedgerLine[]
+}
+
+model LedgerLine {
+  id            String              @id @default(uuid())
+  transactionId String
+  transaction   LedgerTransaction   @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+  accountId     String
+  account       Account             @relation(fields: [accountId], references: [id])
+  asset         String
+  /// Signed: credits positive, debits negative. Per-transaction sum per asset must be zero.
+  amount        Decimal             @db.Decimal(36, 18)
+}
+
+model Order {
+  id            String    @id @default(uuid())
+  userId        String
+  user          User      @relation(fields: [userId], references: [id])
+  clientOrderId String
+  symbol        String
+  /// BUY | SELL
+  side          String
+  price         Decimal   @db.Decimal(36, 18)
+  amount        Decimal   @db.Decimal(36, 18)
+  filledAmount  Decimal   @default(0) @db.Decimal(36, 18)
+  /// Remaining margin locked for this order (matcher/API maintain).
+  quoteReserved Decimal   @default(0) @db.Decimal(36, 18)
+  baseReserved  Decimal   @default(0) @db.Decimal(36, 18)
+  /// OPEN | PARTIALLY_FILLED | FILLED | CANCELED | REJECTED
+  status        String
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  ingestedAt    DateTime?
+
+  @@unique([userId, clientOrderId])
+  @@index([status, createdAt])
+  @@index([symbol, status])
+}
+
+model Fill {
+  id            String   @id @default(uuid())
+  symbol        String
+  makerOrderId  String
+  takerOrderId  String
+  price         Decimal  @db.Decimal(36, 18)
+  quantity      Decimal  @db.Decimal(36, 18)
+  createdAt     DateTime @default(now())
+  ledgerApplied Boolean  @default(false)
+
+  @@index([ledgerApplied, createdAt])
+}
+
+/// Append-only engine log for replay and audit.
+model MatchLog {
+  seq       BigInt   @id @default(autoincrement())
+  event     String
+  payload   Json
+  createdAt DateTime @default(now())
+}
+
+model Deposit {
+  id                     String   @id @default(uuid())
+  userId                 String
+  user                   User     @relation(fields: [userId], references: [id])
+  asset                  String
+  amount                 Decimal  @db.Decimal(36, 18)
+  externalRef            String?
+  confirmationsRequired  Int
+  confirmationsCurrent   Int      @default(0)
+  /// PENDING | CONFIRMED | FAILED
+  status                 String
+  createdAt              DateTime @default(now())
+
+  @@index([userId, status])
+}
+
+model Withdrawal {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  asset       String
+  amount      Decimal  @db.Decimal(36, 18)
+  toAddress   String
+  /// REQUESTED | APPROVED | SENT | FAILED | CANCELED
+  status      String
+  createdAt   DateTime @default(now())
+
+  @@index([userId, createdAt])
+}
