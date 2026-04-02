@@ -62,6 +62,18 @@ npm run dev:web
 - API: `http://127.0.0.1:4000` — Next rewrites `/api/*` to the API (see `apps/web/next.config.ts`).
 - WebSocket: `ws://127.0.0.1:4000/ws?symbol=BTCUSDT&userId=<uuid>` (or set `NEXT_PUBLIC_WS_URL` for the trade page).
 
+## Deploy to Vercel (public URL for friends)
+
+1. Push this repo to GitHub (for example `cashup3/etebaar`).
+2. Open [vercel.com/new](https://vercel.com/new), sign in, then **Import** that repository.
+3. Set **Root Directory** to `apps/web` (required — the repo root is not the Next app).
+4. Deploy. Vercel reads `apps/web/vercel.json` so install runs from the monorepo root (`npm ci`) and build uses `npm run build -w web`.
+5. Share the `https://<project>.vercel.app` link. **Every push** to the connected branch triggers a new deployment.
+
+**Optional env vars** (only if you host the Fastify API elsewhere): `API_ORIGIN` (HTTPS base URL) and `NEXT_PUBLIC_WS_URL` (`wss://...`). Without them, pages that use Next’s own routes (e.g. market prices) still work; live order book / placing orders need the API + CORS for your Vercel domain.
+
+**CLI** (after `npx vercel login` on your machine): from `apps/web`, run `npm run vercel:prod`.
+
 ## Main HTTP endpoints (API)
 
 | Method | Path | Notes |

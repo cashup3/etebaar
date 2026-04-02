@@ -26,6 +26,14 @@ async function main() {
   await app.register(cors, { origin: config.corsOrigin });
   await registerWs(app, redis);
 
+  app.get("/", async () => ({
+    service: "eteebaar-api",
+    message: "HTTP API is running. This is not the website.",
+    health: "/health",
+    ws: "/ws",
+    hint: "Open the Next.js app (usually http://localhost:3000) for the UI.",
+  }));
+
   app.get("/health", async () => ({
     ok: true,
     service: "eteebaar-api",
