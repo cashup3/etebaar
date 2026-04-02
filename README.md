@@ -66,9 +66,14 @@ npm run dev:web
 
 1. Push this repo to GitHub (for example `cashup3/etebaar`).
 2. Open [vercel.com/new](https://vercel.com/new), sign in, then **Import** that repository.
-3. Set **Root Directory** to `apps/web` (required — the repo root is not the Next app).
-4. Deploy. Vercel reads `apps/web/vercel.json` so install runs from the monorepo root (`npm ci`) and build uses `npm run build -w web`.
-5. Share the `https://<project>.vercel.app` link. **Every push** to the connected branch triggers a new deployment.
+
+**Two ways that work:**
+
+- **A — Simplest (only the website):** Set **Framework** to **Next.js** (not **Services**). Set **Root Directory** to `apps/web`. Deploy. Vercel uses `apps/web/vercel.json` for install/build (`npm ci` at repo root, `npm run build -w web`). Ignore any suggestion to also deploy `services/price-worker` — that folder is a **local dev** ticker, not part of the public site.
+
+- **B — If Vercel forces “Services”:** Keep **Root Directory** at the repo root (`./`). The repo now includes a root [`vercel.json`](./vercel.json) with `experimentalServices` for **only** `apps/web`. Click **Refresh** on the import screen if Deploy stayed disabled. **Remove** the `services/price-worker` row from the services list if the UI lets you (you do not need to deploy Python on Vercel for friends to see the UI).
+
+3. Share the `https://<project>.vercel.app` link. **Every push** to the connected branch triggers a new deployment.
 
 **Optional env vars** (only if you host the Fastify API elsewhere): `API_ORIGIN` (HTTPS base URL) and `NEXT_PUBLIC_WS_URL` (`wss://...`). Without them, pages that use Next’s own routes (e.g. market prices) still work; live order book / placing orders need the API + CORS for your Vercel domain.
 
