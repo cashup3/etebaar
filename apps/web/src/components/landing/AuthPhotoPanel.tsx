@@ -16,7 +16,7 @@ export function AuthPhotoPanel() {
       />
       <div className="absolute inset-0 bg-gradient-to-t from-[var(--landing-bg)] via-black/40 to-transparent lg:bg-gradient-to-r lg:from-transparent lg:via-black/30 lg:to-[var(--landing-bg)]" />
       <div className="relative z-[1] mt-auto p-8">
-        <p className="text-lg font-semibold text-white">Eteebaar</p>
+        <p className="text-lg font-semibold text-white">Etebaar</p>
         <p className="mt-2 max-w-sm text-sm text-white/85">
           Spot trading tools designed for clarity — ledger, matching, and a terminal you can run locally.
         </p>

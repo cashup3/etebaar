@@ -23,7 +23,7 @@ type BookSnap = {
   ts: number;
 };
 
-const LS_DEV_USER = "eteebaar_dev_user";
+const LS_DEV_USER = "etebaar_dev_user";
 
 function wsBaseUrl() {
   const env = process.env.NEXT_PUBLIC_WS_URL;

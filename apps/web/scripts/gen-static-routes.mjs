@@ -16,8 +16,8 @@ function tpl(title, slug, extra = "") {
 import { StaticArticle } from "@/components/static/StaticArticle";
 
 export const metadata: Metadata = {
-  title: "${title} · Eteebaar",
-  description: "Eteebaar spot exchange — ${title}.",
+  title: "${title} · Etebaar",
+  description: "Etebaar spot exchange — ${title}.",
 };
 
 export default function Page() {
@@ -75,7 +75,7 @@ write(
 import { CommunityPage } from "@/components/community/CommunityPage";
 
 export const metadata: Metadata = {
-  title: "Community · Eteebaar",
+  title: "Community · Etebaar",
   description: "Official community channels and social links.",
 };
 

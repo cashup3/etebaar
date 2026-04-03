@@ -1,5 +1,5 @@
-const TOKEN = "eteebaar_token";
-const USER = "eteebaar_user";
+const TOKEN = "etebaar_token";
+const USER = "etebaar_user";
 
 export type StoredUser = { id: string; email: string };
 

@@ -1,4 +1,4 @@
-# Eteebaar — custodial spot exchange (monorepo)
+# Etebaar — custodial spot exchange (monorepo)
 
 | Part | Role |
 |------|------|
@@ -30,7 +30,7 @@ Set `DATABASE_URL` / `REDIS_URL` (see [.env.example](./.env.example)). The Go ma
 ## Run (dev)
 
 ```bash
-cd c:\Users\pouya\eteebaar
+cd c:\Users\pouya\etebaar
 npm install
 ```
 
@@ -38,7 +38,7 @@ npm install
 
 ```bash
 cd apps\api
-set DATABASE_URL=postgresql://eteebaar:eteebaar@127.0.0.1:5432/eteebaar
+set DATABASE_URL=postgresql://etebaar:etebaar@127.0.0.1:5432/etebaar
 set REDIS_URL=redis://127.0.0.1:6379
 npm run dev
 ```
@@ -47,7 +47,7 @@ npm run dev
 
 ```bash
 cd services\matching-go
-set DATABASE_URL=postgresql://eteebaar:eteebaar@127.0.0.1:5432/eteebaar
+set DATABASE_URL=postgresql://etebaar:etebaar@127.0.0.1:5432/etebaar
 set REDIS_URL=redis://127.0.0.1:6379
 go run .\cmd\matching\main.go
 ```
@@ -115,6 +115,6 @@ python main.py
 Initialize git **only inside this project folder**:
 
 ```bash
-cd c:\Users\pouya\eteebaar
+cd c:\Users\pouya\etebaar
 git init
 ```

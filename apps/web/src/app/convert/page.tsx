@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { ConvertClient } from "@/components/convert/ConvertClient";
 
 export const metadata: Metadata = {
-  title: "Convert · Eteebaar",
+  title: "Convert · Etebaar",
   description: "Reference calculator: Iranian toman, USD, GBP, GEL, AED, EUR, and major cryptocurrencies.",
 };
 

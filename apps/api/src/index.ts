@@ -27,7 +27,7 @@ async function main() {
   await registerWs(app, redis);
 
   app.get("/", async () => ({
-    service: "eteebaar-api",
+    service: "etebaar-api",
     message: "HTTP API is running. This is not the website.",
     health: "/health",
     ws: "/ws",
@@ -36,7 +36,7 @@ async function main() {
 
   app.get("/health", async () => ({
     ok: true,
-    service: "eteebaar-api",
+    service: "etebaar-api",
     time: new Date().toISOString(),
     redis: redis.status,
   }));

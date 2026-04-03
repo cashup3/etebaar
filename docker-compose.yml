@@ -2,9 +2,9 @@ services:
   postgres:
     image: postgres:16-alpine
     environment:
-      POSTGRES_USER: eteebaar
-      POSTGRES_PASSWORD: eteebaar
-      POSTGRES_DB: eteebaar
+      POSTGRES_USER: etebaar
+      POSTGRES_PASSWORD: etebaar
+      POSTGRES_DB: etebaar
     ports:
       - "5432:5432"
     volumes:

@@ -57,7 +57,7 @@ export default function SignupPage() {
               Create account
             </h1>
             <p className="mt-1 font-mono text-[11px] text-[var(--landing-muted)]">
-              Register for Eteebaar spot trading (demo / dev stack).
+              Register for Etebaar spot trading (demo / dev stack).
             </p>
             <form className="mt-6 space-y-4" onSubmit={onSubmit}>
               <label className="block">

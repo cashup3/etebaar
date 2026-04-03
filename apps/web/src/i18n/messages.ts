@@ -102,7 +102,7 @@ const enTree = {
     riskBody:
       "Digital asset prices are volatile. This software is a demo stack for developers and is not investment advice. You may lose the entirety of your capital. Ensure you understand the risks before using any trading system in production.",
     legalBody:
-      "Eteebaar is an independent project and is not affiliated with any third-party exchange brand. Replace placeholder policies, support channels, and compliance copy before offering services to the public.",
+      "Etebaar is an independent project and is not affiliated with any third-party exchange brand. Replace placeholder policies, support channels, and compliance copy before offering services to the public.",
     copyright: "All rights reserved.",
     cookies: "Cookie preferences",
     socialSoon: "(coming soon)",
@@ -148,7 +148,8 @@ const enTree = {
     supLe: "Law enforcement",
   },
   home: {
-    heroStat: "TRADERS ON ETEEBAAR",
+    heroHeadlineLead: "OVER THOUSANDS OF TRADERS ARE ON ",
+    heroHeadlineBrand: "ETEBAAR",
     heroSub: "A focused spot exchange with professional tools and transparent markets.",
     liqTitle: "Deep liquidity",
     liqSub: "Competitive books on USDT pairs",
@@ -182,7 +183,7 @@ const enTree = {
   cryptoGallery: {
     title: "Crypto & exchange in focus",
     blurb:
-      "Reference imagery only — prices on the terminal come from your configured feeds; Eteebaar is a separate spot stack for builders.",
+      "Reference imagery only — prices on the terminal come from your configured feeds; Etebaar is a separate spot stack for builders.",
     cap1: "Bitcoin & digital assets",
     cap2: "Markets & liquidity",
     cap3: "Spot exchange tools",
@@ -193,7 +194,7 @@ const enTree = {
   trust: {
     titleA: "Built for ",
     titleB: "transparency",
-    body: "Eteebaar is a demo spot stack for builders. The figures beside are placeholders to show how a production exchange might present reserves and support metrics. Replace with real audits before launch.",
+    body: "Etebaar is a demo spot stack for builders. The figures beside are placeholders to show how a production exchange might present reserves and support metrics. Replace with real audits before launch.",
     s1v: "2,400+",
     s1u: "BTC",
     s1d: "Reference reserve illustration - not live attestation",
@@ -214,7 +215,7 @@ const enTree = {
   markets: {
     backHome: "← Home",
     title: "Markets",
-    sub: "Live USDT pairs (reference feed for UI). Trading routes through Eteebaar when your stack is up.",
+    sub: "Live USDT pairs (reference feed for UI). Trading routes through Etebaar when your stack is up.",
     searchPh: "Search symbol…",
     err: "Could not load prices. Check your connection or try again later.",
     pair: "Pair",
@@ -251,7 +252,7 @@ const enTree = {
     srcCrypto: "Crypto vs USDT",
     updated: "Last updated:",
     disclaimer:
-      "Eteebaar does not guarantee accuracy. Banks, exchanges, and spreads differ. Georgian lari is ISO code GEL (sometimes confused with “LAR”). UAE dirham is AED. Use your own pricing and compliance for production.",
+      "Etebaar does not guarantee accuracy. Banks, exchanges, and spreads differ. Georgian lari is ISO code GEL (sometimes confused with “LAR”). UAE dirham is AED. Use your own pricing and compliance for production.",
     ideaTitle: "What would make this even better?",
     ideaBody:
       "Saved favourite pairs, rate alerts, historical charts, local payment rails for Rial, and quotes that match your actual settlement path — all can build on this calculator.",
@@ -265,9 +266,9 @@ const enTree = {
   },
   auth: {
     loginTitle: "Sign in",
-    loginSub: "Eteebaar spot — use the account you registered here.",
+    loginSub: "Etebaar spot — use the account you registered here.",
     signupTitle: "Create account",
-    signupSub: "Register for Eteebaar spot trading (demo / dev stack).",
+    signupSub: "Register for Etebaar spot trading (demo / dev stack).",
     email: "Email",
     password: "Password",
     signinBtn: "Sign in",
@@ -281,7 +282,7 @@ const enTree = {
     err409: "Email already registered",
   },
   authPanel: {
-    title: "Eteebaar",
+    title: "Etebaar",
     sub: "Spot trading tools designed for clarity — ledger, matching, and a terminal you can run locally.",
   },
   theme: { light: "Light mode", dark: "Dark mode", toLight: "Switch to light mode", toDark: "Switch to dark mode" },
@@ -416,7 +417,7 @@ const faTree = {
     riskBody:
       "قیمت دارایی‌های دیجیتال نوسان دارد. این نرم‌افزار یک استک نمونه برای توسعه‌دهندگان است و مشاوره سرمایه‌گذاری نیست. ممکن است کل سرمایه خود را از دست بدهید. قبل از استفاده از هر سیستم معاملاتی در محیط واقعی، ریسک‌ها را بشناسید.",
     legalBody:
-      "اتی‌بار یک پروژه مستقل است و وابسته به هیچ صراف شخص ثالثی نیست. قبل از ارائه خدمت به عموم، متون سیاست، کانال پشتیبانی و الزامات قانونی را جایگزین کنید.",
+      "اعتبار یک پروژه مستقل است و وابسته به هیچ صراف شخص ثالثی نیست. قبل از ارائه خدمت به عموم، متون سیاست، کانال پشتیبانی و الزامات قانونی را جایگزین کنید.",
     copyright: "تمام حقوق محفوظ است.",
     cookies: "تنظیمات کوکی",
     socialSoon: "(به‌زودی)",
@@ -462,7 +463,8 @@ const faTree = {
     supLe: "مجری قانون",
   },
   home: {
-    heroStat: "معامله‌گر در اتی‌بار",
+    heroHeadlineLead: "بیش از هزاران معامله‌گر در ",
+    heroHeadlineBrand: "اعتبار",
     heroSub: "یک صرافی اسپات متمرکز با ابزار حرفه‌ای و بازارهای شفاف.",
     liqTitle: "نقدشوندگی عمیق",
     liqSub: "دفتر سفارش رقابتی برای جفت‌های USDT",
@@ -496,7 +498,7 @@ const faTree = {
   cryptoGallery: {
     title: "تمرکز بر رمزارز و صرافی",
     blurb:
-      "تصاویر مرجع هستند — قیمت‌ها در ترمینال از فیدهای پیکربندی‌شما می‌آید؛ اتی‌بار یک استک اسپات جدا برای سازندگان است.",
+      "تصاویر مرجع هستند — قیمت‌ها در ترمینال از فیدهای پیکربندی‌شما می‌آید؛ اعتبار یک استک اسپات جدا برای سازندگان است.",
     cap1: "بیت‌کوین و دارایی‌های دیجیتال",
     cap2: "بازارها و نقدشوندگی",
     cap3: "ابزارهای صرافی اسپات",
@@ -507,7 +509,7 @@ const faTree = {
   trust: {
     titleA: "ساخته‌شده برای ",
     titleB: "شفافیت",
-    body: "اتی‌بار یک استک نمونه اسپات برای سازندگان است. اعداد کنار صرفاً جای‌نگهدار هستند تا نمایش دهند یک صرافی واقعی چگونه ذخایر و آمار پشتیبانی را نشان می‌دهد. قبل از راه‌اندازی با حسابرسی واقعی جایگزین کنید.",
+    body: "اعتبار یک استک نمونه اسپات برای سازندگان است. اعداد کنار صرفاً جای‌نگهدار هستند تا نمایش دهند یک صرافی واقعی چگونه ذخایر و آمار پشتیبانی را نشان می‌دهد. قبل از راه‌اندازی با حسابرسی واقعی جایگزین کنید.",
     s1v: "۲,۴۰۰+",
     s1u: "BTC",
     s1d: "نمایشی ذخایر — بدون گواهی زنده",
@@ -528,7 +530,7 @@ const faTree = {
   markets: {
     backHome: "خانه ←",
     title: "بازارها",
-    sub: "جفت‌های USDT زنده (فید مرجع برای رابط). معامله از طریق اتی‌بار وقتی استک شما بالا است.",
+    sub: "جفت‌های USDT زنده (فید مرجع برای رابط). معامله از طریق اعتبار وقتی استک شما بالا است.",
     searchPh: "جستجوی نماد…",
     err: "بارگذاری قیمت ممکن نشد. اتصال را بررسی کنید یا بعداً دوباره تلاش کنید.",
     pair: "جفت",
@@ -565,7 +567,7 @@ const faTree = {
     srcCrypto: "رمزارز در برابر USDT",
     updated: "آخرین به‌روزرسانی:",
     disclaimer:
-      "اتی‌بار صحت نرخ را تضمین نمی‌کند. بانک‌ها، صرافی‌ها و اسپرد متفاوت است. لاری گرجستان کد ISO آن GEL است (گاهی با «LAR» اشتباه گرفته می‌شود). درهم امارات AED است. برای محیط واقعی از قیمت‌گذاری و انطباق خودتان استفاده کنید.",
+      "اعتبار صحت نرخ را تضمین نمی‌کند. بانک‌ها، صرافی‌ها و اسپرد متفاوت است. لاری گرجستان کد ISO آن GEL است (گاهی با «LAR» اشتباه گرفته می‌شود). درهم امارات AED است. برای محیط واقعی از قیمت‌گذاری و انطباق خودتان استفاده کنید.",
     ideaTitle: "چه چیزهایی می‌تواند جذاب‌تر شود؟",
     ideaBody:
       "جفت‌های محبوب ذخیره‌شده، هشدار نرخ، نمودار تاریخی، مسیر پرداخت ریالی، و قیمت‌هایی که با مسیر تسویه واقعی شما هم‌خوان است — همه می‌تواند روی همین ماشین‌حساب بنا شود.",
@@ -579,9 +581,9 @@ const faTree = {
   },
   auth: {
     loginTitle: "ورود",
-    loginSub: "اسپات اتی‌بار — از همان حسابی که اینجا ثبت کرده‌اید استفاده کنید.",
+    loginSub: "اسپات اعتبار — از همان حسابی که اینجا ثبت کرده‌اید استفاده کنید.",
     signupTitle: "ایجاد حساب",
-    signupSub: "ثبت‌نام برای معامله اسپات اتی‌بار (دمو / توسعه).",
+    signupSub: "ثبت‌نام برای معامله اسپات اعتبار (دمو / توسعه).",
     email: "ایمیل",
     password: "رمز عبور",
     signinBtn: "ورود",
@@ -595,7 +597,7 @@ const faTree = {
     err409: "ایمیل قبلاً ثبت شده است",
   },
   authPanel: {
-    title: "اتی‌بار",
+    title: "اعتبار",
     sub: "ابزار معامله اسپات با تمرکز بر شفافیت — دفتر کل، تطبیق و ترمینالی که می‌توانید محلی اجرا کنید.",
   },
   theme: {

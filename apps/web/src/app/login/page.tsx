@@ -49,7 +49,7 @@ export default function LoginPage() {
               Sign in
             </h1>
             <p className="mt-1 font-mono text-[11px] text-[var(--landing-muted)]">
-              Eteebaar spot — use the account you registered here.
+              Etebaar spot — use the account you registered here.
             </p>
             <form className="mt-6 space-y-4" onSubmit={onSubmit}>
               <label className="block">

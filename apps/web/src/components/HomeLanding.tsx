@@ -78,8 +78,8 @@ export function HomeLanding() {
           <section className="space-y-8">
             <div>
               <p className="text-[clamp(1.75rem,4vw,2.75rem)] font-bold leading-tight tracking-tight">
-                <span className="text-[var(--gold)]">1,240,000+</span>{" "}
-                <span className="text-[var(--landing-text)]">{t("home.heroStat")}</span>
+                <span className="text-[var(--landing-text)]">{t("home.heroHeadlineLead")}</span>
+                <span className="text-[var(--gold)]">{t("home.heroHeadlineBrand")}</span>
               </p>
               <p className="mt-3 text-lg text-[var(--landing-muted)] sm:text-xl">{t("home.heroSub")}</p>
             </div>

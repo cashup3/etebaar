@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-/* Eteebaar — brand: navy #16274A + gold #FFC323 */
+/* Etebaar — brand: navy #16274A + gold #FFC323 */
 :root,
 html[data-theme="dark"] {
   --brand-navy: #16274a;

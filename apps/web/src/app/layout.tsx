@@ -22,7 +22,7 @@ const vazirmatn = Vazirmatn({
 });
 
 export const metadata: Metadata = {
-  title: "Eteebaar — Spot",
+  title: "Etebaar — Spot",
   description: "Spot trading terminal",
 };
 

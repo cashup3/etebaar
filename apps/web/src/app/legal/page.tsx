@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { StaticArticle } from "@/components/static/StaticArticle";
 
 export const metadata: Metadata = {
-  title: "Legal overview · Eteebaar",
-  description: "Eteebaar spot exchange — Legal overview.",
+  title: "Legal overview · Etebaar",
+  description: "Etebaar spot exchange — Legal overview.",
 };
 
 export default function Page() {

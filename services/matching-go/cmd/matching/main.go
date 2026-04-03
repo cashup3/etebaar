@@ -10,7 +10,7 @@ import (
 	"syscall"
 	"time"
 
-	"eteebaar/matching/internal/matcher"
+	"etebaar/matching/internal/matcher"
 )
 
 func main() {
@@ -35,7 +35,7 @@ func main() {
 		w.Header().Set("Content-Type", "application/json")
 		_ = json.NewEncoder(w).Encode(map[string]any{
 			"ok":      true,
-			"service": "eteebaar-matching",
+			"service": "etebaar-matching",
 			"time":    time.Now().UTC().Format(time.RFC3339Nano),
 		})
 	})

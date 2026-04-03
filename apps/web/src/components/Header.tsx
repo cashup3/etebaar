@@ -66,7 +66,7 @@ export function Header() {
         <div className="flex min-w-0 flex-1 items-center gap-2 sm:gap-4 lg:gap-8">
           <Link href="/" className="flex shrink-0 items-center gap-2">
             <LogoMark />
-            <span className="font-semibold tracking-wide text-[var(--gold)]">ETEEBAAR</span>
+            <span className="font-semibold tracking-wide text-[var(--gold)]">ETEBAAR</span>
           </Link>
           <HeaderNavDesktop pathname={pathname} />
           <HeaderNavMobile />

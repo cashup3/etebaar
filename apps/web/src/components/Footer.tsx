@@ -206,7 +206,7 @@ export function Footer() {
 
           <div className="mt-8 flex flex-col gap-3 border-t border-[var(--landing-border)] pt-6 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-xs text-[var(--landing-muted)]">
-              © {new Date().getFullYear()} Eteebaar. {t("footer.copyright")}
+              © {new Date().getFullYear()} Etebaar. {t("footer.copyright")}
             </p>
             <Link
               href="/cookies"

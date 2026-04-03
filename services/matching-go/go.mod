@@ -1,4 +1,4 @@
-module eteebaar/matching
+module etebaar/matching
 
 go 1.22
 

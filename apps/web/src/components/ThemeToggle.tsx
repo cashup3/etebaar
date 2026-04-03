@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useLocale } from "@/i18n/LocaleProvider";
 
-const KEY = "eteebaar-theme";
+const KEY = "etebaar-theme";
 
 function readTheme(): "dark" | "light" {
   if (typeof document === "undefined") return "dark";

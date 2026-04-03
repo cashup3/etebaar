@@ -8,7 +8,7 @@ export const pagesContentEn = {
   },
   announcements: {
     title: "Announcements",
-    subtitle: "Product updates, maintenance windows, and release notes for Eteebaar.",
+    subtitle: "Product updates, maintenance windows, and release notes for Etebaar.",
     p1: "We publish notices about new features, API changes, scheduled downtime, and security-related updates here. This site is a developer-oriented spot stack; treat announcements as informational until you run your own production cut.",
     p2: "Subscribe options and email alerts are not wired in this demo. For a live deployment, connect this section to your notification provider and CMS.",
     p3: "Nothing on this page constitutes trading advice or a commitment to list any asset.",
@@ -22,7 +22,7 @@ export const pagesContentEn = {
   legal: {
     title: "Legal overview",
     subtitle: "Where policies live and how to read them.",
-    p1: "Eteebaar is an independent project for learning and integration testing. Before serving end users, replace every legal document with counsel-reviewed text for your jurisdiction.",
+    p1: "Etebaar is an independent project for learning and integration testing. Before serving end users, replace every legal document with counsel-reviewed text for your jurisdiction.",
     p2: "Use the links below for terms of use, privacy, and risk disclosure templates you can adapt. They are starting points only.",
     p3: "No lawyer–client relationship is formed by reading these demo pages.",
     p4: "Browse: Terms of use (/legal/terms) · Privacy (/legal/privacy) · Risk disclosure (/legal/risk).",
@@ -71,7 +71,7 @@ export const pagesContentEn = {
   institutional: {
     title: "Institutional",
     subtitle: "For desks, funds, and brokers.",
-    p1: "Eteebaar can be extended with higher rate limits, FIX/REST white-labeling, sub-accounts, and reporting exports. This page outlines the partnership surface area.",
+    p1: "Etebaar can be extended with higher rate limits, FIX/REST white-labeling, sub-accounts, and reporting exports. This page outlines the partnership surface area.",
     p2: "Contact flows, SLAs, and onboarding checklists should be customized for your compliance program. Nothing on this page constitutes an offer of services.",
   },
   bizListing: {
