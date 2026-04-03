@@ -8,6 +8,7 @@ import { TrustReserveSection } from "@/components/landing/TrustReserveSection";
 import { CryptoIcon } from "@/components/CryptoIcon";
 import { useLocale } from "@/i18n/LocaleProvider";
 import { pairBaseAsset } from "@/lib/marketSymbol";
+import { TOP_USDT_PAIRS } from "@/data/topUsdtPairs";
 
 type Ticker = {
   symbol: string;
@@ -16,14 +17,8 @@ type Ticker = {
   volume: string;
 };
 
-const POPULAR_ORDER = [
-  "BTCUSDT",
-  "ETHUSDT",
-  "BNBUSDT",
-  "SOLUSDT",
-  "XRPUSDT",
-  "DOGEUSDT",
-];
+/** Prefer these when building the “Popular” strip (first wins among available tickers). */
+const POPULAR_ORDER = [...TOP_USDT_PAIRS];
 
 const NEWS_KEYS = [
   "home.news0",

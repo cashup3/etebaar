@@ -1,3 +1,5 @@
+import { TOP_USDT_PAIRS } from "@/data/topUsdtPairs";
+
 /** Public reference prices — Binance first (with mirror hosts), CoinGecko fallback for blocked datacenters (e.g. Vercel). */
 
 const COINGECKO =
@@ -16,18 +18,16 @@ function binanceBases(): string[] {
   return [...new Set(list)];
 }
 
-/** Used when exchangeInfo fails; keeps homepage/markets working on slow or restricted networks. */
+const EXTRA_USDT_FALLBACK = [
+  "IMXUSDT", "GRTUSDT", "SNXUSDT", "SANDUSDT", "MANAUSDT", "AXSUSDT", "RUNEUSDT", "KAVAUSDT", "EGLDUSDT",
+  "FLOWUSDT", "QNTUSDT", "STXUSDT", "CFXUSDT", "FXSUSDT", "DYDXUSDT", "PENDLEUSDT", "ORDIUSDT", "TAOUSDT",
+  "JUPUSDT", "PYTHUSDT", "STRKUSDT", "HBARUSDT", "VETUSDT", "ICPUSDT", "ALGOUSDT", "EOSUSDT", "THETAUSDT",
+  "XTZUSDT", "CHZUSDT", "SUSHIUSDT", "COMPUSDT", "YFIUSDT", "1INCHUSDT", "ENSUSDT", "ARUSDT",
+] as const;
+
+/** Used when exchangeInfo fails; TOP_USDT_PAIRS first, then extra alts. */
 const FALLBACK_QUOTE_SYMBOLS: Record<string, string[]> = {
-  USDT: [
-    "BTCUSDT", "ETHUSDT", "BNBUSDT", "SOLUSDT", "XRPUSDT", "DOGEUSDT", "ADAUSDT", "AVAXUSDT", "DOTUSDT",
-    "LINKUSDT", "TRXUSDT", "POLUSDT", "SHIBUSDT", "LTCUSDT", "BCHUSDT", "ETCUSDT", "XLMUSDT", "ATOMUSDT",
-    "NEARUSDT", "APTUSDT", "FILUSDT", "ARBUSDT", "OPUSDT", "INJUSDT", "SUIUSDT", "SEIUSDT", "TIAUSDT",
-    "WLDUSDT", "PEPEUSDT", "FETUSDT", "IMXUSDT", "GRTUSDT", "MKRUSDT", "AAVEUSDT", "SNXUSDT", "CRVUSDT",
-    "LDOUSDT", "UNIUSDT", "SANDUSDT", "MANAUSDT", "AXSUSDT", "RUNEUSDT", "KAVAUSDT", "EGLDUSDT", "FLOWUSDT",
-    "QNTUSDT", "STXUSDT", "CFXUSDT", "FXSUSDT", "DYDXUSDT", "PENDLEUSDT", "ORDIUSDT", "WIFUSDT", "BONKUSDT",
-    "TAOUSDT", "JUPUSDT", "PYTHUSDT", "STRKUSDT", "HBARUSDT", "VETUSDT", "ICPUSDT", "ALGOUSDT", "EOSUSDT",
-    "THETAUSDT", "XTZUSDT", "CHZUSDT", "SUSHIUSDT", "COMPUSDT", "YFIUSDT", "1INCHUSDT", "ENSUSDT", "ARUSDT",
-  ],
+  USDT: [...new Set([...TOP_USDT_PAIRS, ...EXTRA_USDT_FALLBACK])],
 };
 
 function chunk<T>(arr: T[], size: number): T[][] {
@@ -146,11 +146,19 @@ async function fetchTickersCoinGeckoAsUsdt() {
     low_24h: number | null;
   }>;
 
-  const skip = new Set([
-    "usdt", "usdc", "busd", "dai", "tusd", "usdd", "usdp", "fdusd", "pyusd", "usde", "eurs", "eurt",
-  ]);
+  /** Skip only self-referential USDT row; keep USDC/FDUSD etc. for “top stables” visibility. */
+  const skip = new Set(["usdt"]);
 
-  const tickers = arr
+  type Row = {
+    symbol: string;
+    last: string;
+    changePct: string;
+    volume: string;
+    high: string;
+    low: string;
+  };
+
+  const tickers: Row[] = arr
     .filter((c) => c.symbol && !skip.has(c.symbol.toLowerCase()))
     .map((c) => {
       const price = c.current_price ?? 0;
@@ -166,7 +174,14 @@ async function fetchTickersCoinGeckoAsUsdt() {
       };
     });
 
-  return { ok: true as const, body: { quote: "USDT" as const, tickers } };
+  const rank = new Map(TOP_USDT_PAIRS.map((s, i) => [s, i]));
+  const inTop = tickers.filter((r) => rank.has(r.symbol));
+  const rest = tickers.filter((r) => !rank.has(r.symbol));
+  inTop.sort((a, b) => (rank.get(a.symbol) ?? 0) - (rank.get(b.symbol) ?? 0));
+  rest.sort((a, b) => Number.parseFloat(b.volume) - Number.parseFloat(a.volume));
+  const ordered = [...inTop, ...rest].slice(0, 400);
+
+  return { ok: true as const, body: { quote: "USDT" as const, tickers: ordered } };
 }
 
 const INTERVALS = new Set([

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { TOP_USDT_PAIRS } from "@/data/topUsdtPairs";
 import { fetchIranRatesFromEnv } from "@/lib/iranRatesJson";
 
 /** Cache aggregated rates briefly at the edge. */
@@ -19,29 +20,7 @@ const WALLEX_USDT_DEPTH = "https://api.wallex.ir/v1/depth?symbol=USDTTMN";
 /** ~toman per 1 USDT when no live feed works (override with FALLBACK_TOMAN_PER_USDT on Vercel). */
 const DEFAULT_TOMAN_FALLBACK = 105000;
 
-const CRYPTO_PAIRS = [
-  "BTCUSDT",
-  "ETHUSDT",
-  "BNBUSDT",
-  "SOLUSDT",
-  "XRPUSDT",
-  "DOGEUSDT",
-  "ADAUSDT",
-  "TRXUSDT",
-  "AVAXUSDT",
-  "DOTUSDT",
-  "LINKUSDT",
-  "MATICUSDT",
-  "LTCUSDT",
-  "UNIUSDT",
-  "ATOMUSDT",
-  "FILUSDT",
-  "ETCUSDT",
-  "XLMUSDT",
-  "TONUSDT",
-  "NEARUSDT",
-  "APTUSDT",
-] as const;
+const CRYPTO_PAIRS = TOP_USDT_PAIRS;
 
 function num(s: string | undefined): number | null {
   if (s === undefined) return null;
