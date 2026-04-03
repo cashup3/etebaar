@@ -161,63 +161,39 @@ function CommunityColumn({ t }: { t: (k: string) => string }) {
   );
 }
 
-function SupportFab({ t }: { t: (k: string) => string }) {
-  return (
-    <Link
-      href="/help"
-      className="fixed bottom-6 end-6 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-[var(--gold)] text-[var(--gold-ink)] shadow-lg transition-transform hover:scale-105 active:scale-95"
-      title={t("footer.supHelp")}
-      aria-label={t("footer.supportAria")}
-    >
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden>
-        <path
-          d="M4 11a8 8 0 0 1 16 0v3a2 2 0 0 1-2 2h-2v-4h2v-1a6 6 0 0 0-12 0v1h2v4H6a2 2 0 0 1-2-2v-3Z"
-          stroke="currentColor"
-          strokeWidth="1.5"
-          strokeLinejoin="round"
-        />
-        <path d="M10 19a2 2 0 1 0 4 0v-1h-4v1Z" stroke="currentColor" strokeWidth="1.5" />
-      </svg>
-    </Link>
-  );
-}
-
 export function Footer() {
   const { t } = useLocale();
   return (
-    <>
-      <footer className="border-t border-[var(--landing-border)] bg-[var(--landing-bg)] text-[var(--landing-text)]">
-        <div className="mx-auto max-w-[1400px] px-4 py-14 pb-24 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 xl:gap-8">
-            <CommunityColumn t={t} />
-            <LinkColumn titleKey="footer.about" links={footerAbout} t={t} />
-            <LinkColumn titleKey="footer.products" links={footerProducts} t={t} />
-            <BusinessLearnColumn t={t} />
-            <ServiceSupportColumn t={t} />
-          </div>
-
-          <div className="mt-14 border-t border-[var(--landing-border)] pt-8">
-            <p className="text-[11px] leading-relaxed text-[var(--landing-muted)]">
-              <strong className="font-medium text-[var(--landing-text)]">{t("footer.riskTitle")}</strong>{" "}
-              {t("footer.riskBody")}
-            </p>
-            <p className="mt-4 text-[11px] leading-relaxed text-[var(--landing-muted)]">{t("footer.legalBody")}</p>
-          </div>
-
-          <div className="mt-8 flex flex-col gap-3 border-t border-[var(--landing-border)] pt-6 sm:flex-row sm:items-center sm:justify-between">
-            <p className="text-xs text-[var(--landing-muted)]">
-              © {new Date().getFullYear()} Etebaar. {t("footer.copyright")}
-            </p>
-            <Link
-              href="/cookies"
-              className="w-fit text-xs text-[var(--landing-muted)] underline-offset-2 hover:text-[var(--gold)] hover:underline"
-            >
-              {t("footer.cookies")}
-            </Link>
-          </div>
+    <footer className="border-t border-[var(--landing-border)] bg-[var(--landing-bg)] text-[var(--landing-text)]">
+      <div className="mx-auto max-w-[1400px] px-4 py-14 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 xl:gap-8">
+          <CommunityColumn t={t} />
+          <LinkColumn titleKey="footer.about" links={footerAbout} t={t} />
+          <LinkColumn titleKey="footer.products" links={footerProducts} t={t} />
+          <BusinessLearnColumn t={t} />
+          <ServiceSupportColumn t={t} />
         </div>
-      </footer>
-      <SupportFab t={t} />
-    </>
+
+        <div className="mt-14 border-t border-[var(--landing-border)] pt-8">
+          <p className="text-[11px] leading-relaxed text-[var(--landing-muted)]">
+            <strong className="font-medium text-[var(--landing-text)]">{t("footer.riskTitle")}</strong>{" "}
+            {t("footer.riskBody")}
+          </p>
+          <p className="mt-4 text-[11px] leading-relaxed text-[var(--landing-muted)]">{t("footer.legalBody")}</p>
+        </div>
+
+        <div className="mt-8 flex flex-col gap-3 border-t border-[var(--landing-border)] pt-6 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-xs text-[var(--landing-muted)]">
+            © {new Date().getFullYear()} Etebaar. {t("footer.copyright")}
+          </p>
+          <Link
+            href="/cookies"
+            className="w-fit text-xs text-[var(--landing-muted)] underline-offset-2 hover:text-[var(--gold)] hover:underline"
+          >
+            {t("footer.cookies")}
+          </Link>
+        </div>
+      </div>
+    </footer>
   );
 }
