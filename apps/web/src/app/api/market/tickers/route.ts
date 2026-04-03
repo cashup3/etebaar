@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { fetchTickersByQuote } from "@/lib/marketReference";
 
 export const dynamic = "force-dynamic";
+/** Binance batched calls; allow headroom on serverless (Hobby max 10s). */
+export const maxDuration = 25;
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);

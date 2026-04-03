@@ -165,6 +165,9 @@ const enTree = {
     newListing: "New listing",
     viewAll: "View all →",
     loadingMkts: "Loading markets…",
+    marketsErr:
+      "Could not load live prices (reference feed unreachable). Check your connection or try again later.",
+    marketsEmpty: "No markets to show.",
     news: "News",
     newsView: "View all →",
     trustNote: "Industry notes · Illustrative only",
@@ -480,6 +483,9 @@ const faTree = {
     newListing: "لیستینگ جدید",
     viewAll: "مشاهده همه ←",
     loadingMkts: "در حال بارگذاری بازارها…",
+    marketsErr:
+      "بارگذاری قیمت‌های زنده ممکن نشد (فید مرجع در دسترس نیست). اتصال را بررسی کنید یا بعداً دوباره تلاش کنید.",
+    marketsEmpty: "بازاری برای نمایش نیست.",
     news: "اخبار",
     newsView: "مشاهده همه ←",
     trustNote: "یادداشت صنعتی · صرفاً نمایشی",

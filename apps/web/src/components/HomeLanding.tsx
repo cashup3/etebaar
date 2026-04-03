@@ -42,13 +42,23 @@ const TRUST_STRIP = [
 export function HomeLanding() {
   const { t } = useLocale();
   const [tickers, setTickers] = useState<Ticker[]>([]);
+  const [mktLoad, setMktLoad] = useState<"loading" | "ok" | "error">("loading");
   const [tab, setTab] = useState<"popular" | "new">("popular");
 
   useEffect(() => {
     void fetch("/api/market/tickers?quote=USDT")
-      .then((r) => (r.ok ? r.json() : Promise.reject()))
-      .then((j: { tickers: Ticker[] }) => setTickers(j.tickers ?? []))
-      .catch(() => setTickers([]));
+      .then((r) => {
+        if (!r.ok) throw new Error(String(r.status));
+        return r.json();
+      })
+      .then((j: { tickers: Ticker[] }) => {
+        setTickers(j.tickers ?? []);
+        setMktLoad("ok");
+      })
+      .catch(() => {
+        setTickers([]);
+        setMktLoad("error");
+      });
   }, []);
 
   const popularRows = useMemo(() => {
@@ -214,9 +224,19 @@ export function HomeLanding() {
                     </li>
                   );
                 })}
-                {!displayRows.length && (
+                {mktLoad === "loading" && !displayRows.length && (
                   <li className="px-4 py-8 text-center text-sm text-[var(--landing-muted)]">
                     {t("home.loadingMkts")}
+                  </li>
+                )}
+                {mktLoad === "error" && (
+                  <li className="px-4 py-8 text-center text-sm text-[var(--landing-muted)]">
+                    {t("home.marketsErr")}
+                  </li>
+                )}
+                {mktLoad === "ok" && !displayRows.length && (
+                  <li className="px-4 py-8 text-center text-sm text-[var(--landing-muted)]">
+                    {t("home.marketsEmpty")}
                   </li>
                 )}
               </ul>
