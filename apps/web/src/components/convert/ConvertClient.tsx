@@ -303,37 +303,6 @@ export function ConvertClient() {
           ) : null}
         </div>
       )}
-
-      <div className="rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] p-4">
-        <p className="font-mono text-[10px] font-semibold uppercase tracking-wider text-[var(--muted-dim)]">
-          {t("convertPage.sources")}
-        </p>
-        <ul className="mt-2 space-y-1 font-mono text-[10px] text-[var(--muted)]">
-          <li>
-            IRT:{" "}
-            {data?.sources.irt === "nobitex"
-              ? t("convertPage.srcNobitex")
-              : data?.sources.irt === "iran-json"
-                ? t("convertPage.srcIranJson")
-                : data?.sources.irt === "wallex"
-                  ? t("convertPage.srcWallex")
-                  : t("convertPage.srcFallback")}
-          </li>
-          <li>
-            {t("convertPage.srcFiat")}: {data?.sources.fx === "frankfurter-ecb" ? "Frankfurter / ECB" : "—"}
-          </li>
-          <li>
-            {t("convertPage.srcCrypto")}: {data?.sources.crypto === "binance-usdt" ? "Binance USDT" : "—"}
-          </li>
-        </ul>
-        {data?.updatedAt && (
-          <p className="mt-2 font-mono text-[9px] text-[var(--muted-dim)]">
-            {t("convertPage.updated")}{" "}
-            {new Date(data.updatedAt).toLocaleString(locale === "fa" ? "fa-IR" : "en-US")}
-          </p>
-        )}
-        <p className="mt-3 font-mono text-[10px] leading-relaxed text-[var(--muted-dim)]">{t("convertPage.disclaimer")}</p>
-      </div>
     </div>
   );
 }
