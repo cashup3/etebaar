@@ -63,6 +63,20 @@ function rowFromPair(label: string, v: unknown): IranOpenMarketRow | null {
   return null;
 }
 
+function rowLooksLikeUsdt(label: string): boolean {
+  const s = label.trim().toUpperCase();
+  if (s === "USDT" || s.startsWith("USDT ") || s.includes("TETHER")) return true;
+  return /تتر/.test(label);
+}
+
+/** Ensure a USDT↔toman row exists (toman per 1 USDT); skip if the feed already lists USDT. */
+function withUsdtTomanRow(rows: IranOpenMarketRow[], tomanPerUsdt: number): IranOpenMarketRow[] {
+  if (!Number.isFinite(tomanPerUsdt) || tomanPerUsdt <= 0) return rows;
+  if (rows.some((r) => rowLooksLikeUsdt(r.label))) return rows;
+  const mid = Math.round(tomanPerUsdt);
+  return [{ label: "USDT", buy: mid, sell: mid }, ...rows];
+}
+
 /** Build display rows from `items[]` or common fiat/gold keys (all values in toman). */
 export function buildIranRows(o: Record<string, unknown>, tomanPerUsdt: number): IranOpenMarketRow[] {
   const rows: IranOpenMarketRow[] = [];
@@ -78,10 +92,11 @@ export function buildIranRows(o: Record<string, unknown>, tomanPerUsdt: number):
         rows.push({ label, buy: buy ?? undefined, sell: sell ?? undefined });
       }
     }
-    if (rows.length) return rows;
+    if (rows.length) return withUsdtTomanRow(rows, tomanPerUsdt);
   }
 
   const pairs: [string, string[]][] = [
+    ["USDT", ["usdt", "USDT", "tether", "Tether"]],
     ["USD", ["usd", "USD"]],
     ["EUR", ["eur", "EUR"]],
     ["GBP", ["gbp", "GBP"]],
@@ -118,11 +133,7 @@ export function buildIranRows(o: Record<string, unknown>, tomanPerUsdt: number):
     }
   }
 
-  if (!rows.length) {
-    rows.push({ label: "USDT ≈ USD (reference)", sell: tomanPerUsdt });
-  }
-
-  return rows;
+  return withUsdtTomanRow(rows, tomanPerUsdt);
 }
 
 export function normalizeIranRatesJson(raw: unknown): NormalizedIranRates | null {
