@@ -334,11 +334,6 @@ export function ConvertClient() {
         )}
         <p className="mt-3 font-mono text-[10px] leading-relaxed text-[var(--muted-dim)]">{t("convertPage.disclaimer")}</p>
       </div>
-
-      <div className="rounded-lg border border-[var(--border-strong)] bg-[var(--accent-dim)] p-4">
-        <p className="font-mono text-[11px] font-medium text-[var(--text)]">{t("convertPage.ideaTitle")}</p>
-        <p className="mt-1 font-mono text-[10px] leading-relaxed text-[var(--muted)]">{t("convertPage.ideaBody")}</p>
-      </div>
     </div>
   );
 }

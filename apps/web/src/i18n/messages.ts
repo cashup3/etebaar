@@ -261,9 +261,6 @@ const enTree = {
     updated: "Last updated:",
     disclaimer:
       "Etebaar does not guarantee accuracy. Banks, exchanges, and spreads differ. Georgian lari is ISO code GEL (sometimes confused with “LAR”). UAE dirham is AED. Use your own pricing and compliance for production.",
-    ideaTitle: "What would make this even better?",
-    ideaBody:
-      "Saved favourite pairs, rate alerts, historical charts, local payment rails for Rial, and quotes that match your actual settlement path — all can build on this calculator.",
     openTrade: "Open spot terminal",
   },
   mBanner: {
@@ -584,9 +581,6 @@ const faTree = {
     updated: "آخرین به‌روزرسانی:",
     disclaimer:
       "اعتبار صحت نرخ را تضمین نمی‌کند. بانک‌ها، صرافی‌ها و اسپرد متفاوت است. لاری گرجستان کد ISO آن GEL است (گاهی با «LAR» اشتباه گرفته می‌شود). درهم امارات AED است. برای محیط واقعی از قیمت‌گذاری و انطباق خودتان استفاده کنید.",
-    ideaTitle: "چه چیزهایی می‌تواند جذاب‌تر شود؟",
-    ideaBody:
-      "جفت‌های محبوب ذخیره‌شده، هشدار نرخ، نمودار تاریخی، مسیر پرداخت ریالی، و قیمت‌هایی که با مسیر تسویه واقعی شما هم‌خوان است — همه می‌تواند روی همین ماشین‌حساب بنا شود.",
     openTrade: "باز کردن ترمینال اسپات",
   },
   mBanner: {
