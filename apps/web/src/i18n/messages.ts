@@ -19,7 +19,7 @@ function deepMerge<T extends Record<string, unknown>>(base: T, extra: Partial<T>
 const enTree = {
   common: { soon: "Soon", loading: "Loading…" },
   floatingHelp: {
-    telegram: "Telegram support — @etebarex",
+    telegram: "Telegram support — @etebaarex",
     telegramTitle: "Open Telegram chat",
   },
   header: {
@@ -166,9 +166,14 @@ const enTree = {
     gpSoon: "Google Play (coming soon)",
     asSoon: "App Store (coming soon)",
     qrSoon: "QR code (coming soon)",
-    popular: "Popular",
-    newListing: "New listing",
-    viewAll: "View all →",
+    popular: "Crypto",
+    fiatCurrencies: "Currencies",
+    fiatHint: "1 unit → toman (reference)",
+    fiatLoading: "Loading currency rates…",
+    fiatEmpty: "No fiat rates available.",
+    fiatErr: "Could not load currency rates. Try again later.",
+    viewAllMkts: "Markets →",
+    viewAllConvert: "Convert →",
     loadingMkts: "Loading markets…",
     marketsErr:
       "Could not load live prices (reference feed unreachable). Check your connection or try again later.",
@@ -188,6 +193,11 @@ const enTree = {
     news2: "Developers ship faster settlement previews on test networks industry-wide.",
     news3: "Market structure reports highlight improved depth during U.S. trading hours.",
     news4: "Self-custody education campaigns expand across exchange partner networks.",
+    calcTitle: "Quick convert",
+    calcSub: "Reference rates in real time — same engine as the full converter.",
+    calcFull: "Full converter",
+    calcNoRates: "Rates are not available right now.",
+    calcDisclaimer: "Indicative only — not a quote or offer to trade.",
   },
   cryptoGallery: {
     title: "Crypto & exchange in focus",
@@ -339,7 +349,7 @@ const enTree = {
 const faTree = {
   common: { soon: "به‌زودی", loading: "در حال بارگذاری…" },
   floatingHelp: {
-    telegram: "پشتیبانی تلگرام — @etebarex",
+    telegram: "پشتیبانی تلگرام — @etebaarex",
     telegramTitle: "باز کردن چت تلگرام",
   },
   header: {
@@ -486,9 +496,14 @@ const faTree = {
     gpSoon: "Google Play (به‌زودی)",
     asSoon: "App Store (به‌زودی)",
     qrSoon: "QR کد (به‌زودی)",
-    popular: "محبوب",
-    newListing: "لیستینگ جدید",
-    viewAll: "مشاهده همه ←",
+    popular: "کریپتو",
+    fiatCurrencies: "ارزها",
+    fiatHint: "۱ واحد → تومان (مرجع)",
+    fiatLoading: "در حال بارگذاری نرخ ارز…",
+    fiatEmpty: "نرخ ارز در دسترس نیست.",
+    fiatErr: "بارگذاری نرخ ارز ممکن نشد. بعداً دوباره تلاش کنید.",
+    viewAllMkts: "بازارها ←",
+    viewAllConvert: "تبدیل ←",
     loadingMkts: "در حال بارگذاری بازارها…",
     marketsErr:
       "بارگذاری قیمت‌های زنده ممکن نشد (فید مرجع در دسترس نیست). اتصال را بررسی کنید یا بعداً دوباره تلاش کنید.",
@@ -508,6 +523,11 @@ const faTree = {
     news2: "توسعه‌دهندگان پیش‌نمایش تسویه سریع‌تر را روی شبکه‌های آزمایشی منتشر می‌کنند.",
     news3: "گزارش‌های ساختار بازار عمق بیشتر در ساعات معاملاتی آمریکا را نشان می‌دهد.",
     news4: "کمپین‌های آموزش خود-حضانت گسترش می‌یابد.",
+    calcTitle: "تبدیل سریع",
+    calcSub: "نرخ‌های مرجع لحظه‌ای — همان موتور صفحه تبدیل کامل.",
+    calcFull: "تبدیل کامل",
+    calcNoRates: "الان نرخ در دسترس نیست.",
+    calcDisclaimer: "صرفاً نمایشی — پیشنهاد معامله یا قیمت قطعی نیست.",
   },
   cryptoGallery: {
     title: "تمرکز بر رمزارز و صرافی",

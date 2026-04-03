@@ -23,7 +23,7 @@ async function fetchFrankfurterUsdTargets(): Promise<Partial<Record<string, numb
   try {
     const u = new URL(FRANKFURTER);
     u.searchParams.set("from", "USD");
-    u.searchParams.set("to", "GBP,GEL,AED,EUR");
+    u.searchParams.set("to", "GBP,GEL,AED,EUR,TRY,CHF,JPY,CAD,CNY,SEK,NOK,INR,PLN");
     const res = await fetch(u.toString(), fetchOpts);
     if (!res.ok) return out;
     const j = (await res.json()) as { rates?: Record<string, number> };
@@ -92,7 +92,24 @@ export async function GET() {
     if (typeof u === "number" && Number.isFinite(u) && u > 0) usdPerUnit[base] = u;
   }
 
-  const fiatCodes = ["IRT", "USD", "USDT", "GBP", "GEL", "AED", "EUR"].filter((c) => usdPerUnit[c] != null);
+  const fiatCodes = [
+    "IRT",
+    "USD",
+    "USDT",
+    "EUR",
+    "GBP",
+    "GEL",
+    "AED",
+    "TRY",
+    "CHF",
+    "JPY",
+    "CAD",
+    "CNY",
+    "SEK",
+    "NOK",
+    "INR",
+    "PLN",
+  ].filter((c) => usdPerUnit[c] != null);
   const cryptoCodes = CRYPTO_PAIRS.map((p) => p.replace("USDT", "")).filter(
     (b) => usdPerUnit[b] != null && !fiatCodes.includes(b),
   );

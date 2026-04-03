@@ -44,9 +44,9 @@ export function ConvertClient() {
   const { t, locale } = useLocale();
   const [data, setData] = useState<RatesPayload | null>(null);
   const [loadErr, setLoadErr] = useState<string | null>(null);
-  const [from, setFrom] = useState("IRT");
-  const [to, setTo] = useState("USD");
-  const [amountIn, setAmountIn] = useState("1000000");
+  const [from, setFrom] = useState("USD");
+  const [to, setTo] = useState("IRT");
+  const [amountIn, setAmountIn] = useState("100");
 
   useEffect(() => {
     void fetch("/api/convert/rates")

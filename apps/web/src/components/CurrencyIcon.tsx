@@ -14,6 +14,15 @@ const FIAT_FLAG_CC: Record<string, string> = {
   GEL: "ge",
   AED: "ae",
   IRT: "ir",
+  TRY: "tr",
+  CHF: "ch",
+  JPY: "jp",
+  CAD: "ca",
+  CNY: "cn",
+  SEK: "se",
+  NOK: "no",
+  INR: "in",
+  PLN: "pl",
 };
 
 type Props = {
