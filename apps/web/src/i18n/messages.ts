@@ -18,10 +18,6 @@ function deepMerge<T extends Record<string, unknown>>(base: T, extra: Partial<T>
 /** Nested messages; flattened with dot paths for `t()`. */
 const enTree = {
   common: { soon: "Soon", loading: "Loading…" },
-  floatingHelp: {
-    telegram: "Telegram support — @etebaar_ex",
-    telegramTitle: "Open Telegram chat",
-  },
   header: {
     search: "Search",
     searchSoon: "Search (coming soon)",
@@ -336,10 +332,6 @@ const enTree = {
 
 const faTree = {
   common: { soon: "به‌زودی", loading: "در حال بارگذاری…" },
-  floatingHelp: {
-    telegram: "پشتیبانی تلگرام — @etebaar_ex",
-    telegramTitle: "باز کردن چت تلگرام",
-  },
   header: {
     search: "جستجو",
     searchSoon: "جستجو (به‌زودی)",
