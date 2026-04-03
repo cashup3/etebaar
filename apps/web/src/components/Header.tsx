@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/components/AuthProvider";
@@ -37,16 +38,16 @@ function IconDownload({ className }: { className?: string }) {
 
 function LogoMark({ className }: { className?: string }) {
   return (
-    <span className={`inline-flex items-center justify-center ${className ?? ""}`} aria-hidden>
-      <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
-        <path
-          d="M16 4 28 10v12L16 28 4 22V10L16 4Z"
-          stroke="var(--gold)"
-          strokeWidth="1.5"
-          fill="var(--gold-dim)"
-        />
-        <path d="M16 10 22 13.5v5L16 22l-6-3.5v-5L16 10Z" fill="var(--gold)" />
-      </svg>
+    <span className={`relative inline-flex h-8 w-8 shrink-0 items-center justify-center ${className ?? ""}`}>
+      <Image
+        src="/brand/logo.png"
+        alt="Etebaar"
+        width={64}
+        height={64}
+        className="h-full w-full object-contain object-center"
+        priority
+        sizes="32px"
+      />
     </span>
   );
 }
