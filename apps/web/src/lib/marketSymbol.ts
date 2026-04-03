@@ -22,11 +22,15 @@ export function cryptoIconSlug(base: string): string {
     LUNC: "luna",
     USTC: "ust",
     RNDR: "rndr",
+    /** Package predates POL rebrand */
+    POL: "matic",
+    MATIC: "matic",
   };
   return (aliases[b] ?? b).toLowerCase();
 }
 
+/** Same-origin proxy so icons work when jsdelivr/unpkg are blocked in the browser. */
 export function cryptoIconUrl(base: string): string {
   const slug = cryptoIconSlug(base);
-  return `https://cdn.jsdelivr.net/npm/cryptocurrency-icons@0.18.1/svg/color/${slug}.svg`;
+  return `/api/crypto-icon/${encodeURIComponent(slug)}`;
 }
