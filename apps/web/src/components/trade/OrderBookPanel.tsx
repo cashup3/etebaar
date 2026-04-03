@@ -58,7 +58,7 @@ export function OrderBookPanel({ book, rows = 14 }: { book: BookSnap | null; row
   }, [book, rows]);
 
   return (
-    <div className="flex h-full min-h-[320px] flex-col border border-[var(--border)] bg-[var(--panel)] sm:min-h-[400px] lg:min-h-[calc(100vh-220px)]">
+    <div className="flex h-full min-h-[320px] min-w-0 flex-col border border-[var(--border)] bg-[var(--panel)] sm:min-h-[400px] lg:min-h-[calc(100dvh-220px)]">
       <div className="flex items-center justify-between border-b border-[var(--border)] px-2 py-2">
         <span className="font-mono text-[11px] font-medium uppercase tracking-wider text-[var(--muted)]">
           {t("terminal.obTitle")}

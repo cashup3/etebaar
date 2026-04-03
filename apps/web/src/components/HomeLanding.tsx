@@ -11,6 +11,7 @@ import { CurrencyIcon } from "@/components/CurrencyIcon";
 import { useLocale } from "@/i18n/LocaleProvider";
 import { formatToman } from "@/lib/formatToman";
 import { pairBaseAsset } from "@/lib/marketSymbol";
+import { FIAT_WIDGET_ORDER } from "@/data/fiatWidgetOrder";
 import { TOP_USDT_PAIRS } from "@/data/topUsdtPairs";
 
 type Ticker = {
@@ -27,25 +28,6 @@ type Ticker = {
 
 /** Prefer these when building the crypto strip (first wins among available tickers). */
 const POPULAR_ORDER = [...TOP_USDT_PAIRS];
-
-/** Fiat / stable widget order: 1 unit → toman (skipped if missing from rates). */
-const FIAT_WIDGET_ORDER = [
-  "USD",
-  "EUR",
-  "GBP",
-  "GEL",
-  "AED",
-  "TRY",
-  "CHF",
-  "JPY",
-  "CAD",
-  "CNY",
-  "USDT",
-  "SEK",
-  "NOK",
-  "INR",
-  "PLN",
-] as const;
 
 const NEWS_KEYS = [
   "home.news0",
@@ -68,7 +50,7 @@ export function HomeLanding() {
   const [tomanPerUsdt, setTomanPerUsdt] = useState<number | null>(null);
   const [tickersLoad, setTickersLoad] = useState<"loading" | "ok" | "error">("loading");
   const [convertLoad, setConvertLoad] = useState<"loading" | "ok" | "error">("loading");
-  const [tab, setTab] = useState<"popular" | "fiat">("popular");
+  const [tab, setTab] = useState<"popular" | "fiat">("fiat");
 
   const currencyNames = useMemo(
     () => new Intl.DisplayNames(locale === "fa" ? "fa-IR" : "en-US", { type: "currency" }),
@@ -170,8 +152,8 @@ export function HomeLanding() {
   }, [usdtTomanRow, popularRows]);
 
   return (
-    <div className="relative min-h-[calc(100vh-var(--header-h))] bg-[var(--landing-bg)] text-[var(--landing-text)]">
-      <div className="mx-auto max-w-[1200px] px-4 pb-24 pt-10 sm:px-6 lg:pt-14">
+    <div className="relative min-h-[calc(100dvh-var(--header-h))] w-full min-w-0 overflow-x-clip bg-[var(--landing-bg)] text-[var(--landing-text)]">
+      <div className="mx-auto w-full min-w-0 max-w-[1200px] px-4 pb-24 pt-10 sm:px-6 lg:pt-14">
         <div className="grid gap-10 lg:grid-cols-[1fr_380px] lg:items-start lg:gap-12">
           {/* Hero */}
           <section className="space-y-8">
@@ -212,7 +194,7 @@ export function HomeLanding() {
                 <span>{t("home.perk")}</span>
               </div>
               <Link
-                href="/signup"
+                href="/login?signup=1"
                 className="inline-flex min-w-[160px] items-center justify-center rounded-md bg-[var(--gold)] px-8 py-3.5 text-center text-base font-semibold text-[var(--gold-ink)] shadow-sm transition-colors hover:bg-[var(--gold-hover)]"
               >
                 {t("home.signup")}
@@ -256,8 +238,8 @@ export function HomeLanding() {
           {/* Widgets */}
           <aside className="space-y-4">
             <div className="overflow-hidden rounded-lg border border-[var(--landing-border)] bg-[var(--landing-card)]">
-              <div className="flex items-center justify-between border-b border-[var(--landing-border)] px-4 pt-3">
-                <div className="flex gap-6">
+              <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 border-b border-[var(--landing-border)] px-4 pt-3">
+                <div className="flex min-w-0 flex-1 gap-4 sm:gap-6">
                   <button
                     type="button"
                     onClick={() => setTab("popular")}
@@ -283,7 +265,7 @@ export function HomeLanding() {
                 </div>
                 <Link
                   href={tab === "popular" ? "/markets" : "/convert"}
-                  className="pb-2.5 text-xs font-medium text-[var(--gold)] hover:underline"
+                  className="shrink-0 pb-2.5 text-xs font-medium text-[var(--gold)] hover:underline"
                 >
                   {tab === "popular" ? t("home.viewAllMkts") : t("home.viewAllConvert")}
                 </Link>

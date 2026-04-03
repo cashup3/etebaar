@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
-import { StaticArticle } from "@/components/static/StaticArticle";
+import { BuyCryptoPage } from "@/components/buy/BuyCryptoPage";
 
 export const metadata: Metadata = {
   title: "Buy crypto · Etebaar",
-  description: "Etebaar spot exchange — Buy crypto.",
+  description:
+    "Buy Bitcoin, Ethereum, and major crypto on Etebaar spot markets. Reference toman prices, web terminal, sign up in minutes. Based in Tbilisi, Georgia.",
 };
 
 export default function Page() {
-  return <StaticArticle slug="buy" />;
+  return <BuyCryptoPage />;
 }

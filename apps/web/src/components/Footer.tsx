@@ -164,8 +164,8 @@ function CommunityColumn({ t }: { t: (k: string) => string }) {
 export function Footer() {
   const { t } = useLocale();
   return (
-    <footer className="border-t border-[var(--landing-border)] bg-[var(--landing-bg)] text-[var(--landing-text)]">
-      <div className="mx-auto max-w-[1400px] px-4 py-14 sm:px-6 lg:px-8">
+    <footer className="w-full min-w-0 border-t border-[var(--landing-border)] bg-[var(--landing-bg)] text-[var(--landing-text)]">
+      <div className="mx-auto w-full min-w-0 max-w-[1400px] px-4 py-14 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 xl:gap-8">
           <CommunityColumn t={t} />
           <LinkColumn titleKey="footer.about" links={footerAbout} t={t} />

@@ -216,10 +216,10 @@ export function TradeTerminal() {
   }
 
   return (
-    <div className="flex min-h-[calc(100vh-var(--header-h)-1rem)] flex-col">
+    <div className="flex min-h-[calc(100dvh-var(--header-h)-1rem)] w-full min-w-0 flex-col">
       <InstrumentBar base={base} quote={quote || "—"} book={book} ticker={ticker} />
 
-      <div className="grid flex-1 grid-cols-1 gap-2 lg:grid-cols-[minmax(0,1fr)_300px_300px] xl:grid-cols-[minmax(0,1fr)_280px_300px]">
+      <div className="grid min-w-0 flex-1 grid-cols-1 gap-2 lg:grid-cols-[minmax(0,1fr)_minmax(240px,300px)_minmax(240px,300px)] xl:grid-cols-[minmax(0,1fr)_280px_300px]">
         <ChartPane symbol={symbol} />
         <OrderBookPanel book={book} rows={16} />
         <OrderTicket
@@ -235,7 +235,7 @@ export function TradeTerminal() {
         />
       </div>
 
-      <div className="mt-2 grid grid-cols-1 gap-2 lg:grid-cols-2">
+      <div className="mt-2 grid min-w-0 grid-cols-1 gap-2 lg:grid-cols-2">
         <ActivityTape rows={tape} />
         <div className="border border-[var(--border)] bg-[var(--panel)]">
           <button

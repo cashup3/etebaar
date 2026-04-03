@@ -2,8 +2,9 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { STOCK } from "@/components/landing/stockPhotos";
 import { useLocale } from "@/i18n/LocaleProvider";
+
+const MOBILE_SCREENSHOT = "/landing/eteebaar-mobile-screenshot.jpg";
 
 export function TradeOnTheGoSection() {
   const { t } = useLocale();
@@ -15,13 +16,12 @@ export function TradeOnTheGoSection() {
       <div className="relative mx-auto w-full max-w-[280px] lg:order-2 lg:mx-0">
         <div className="relative aspect-[9/16] w-full overflow-hidden rounded-3xl border border-[var(--landing-border)] shadow-2xl shadow-black/40">
           <Image
-            src={STOCK.phone}
+            src={MOBILE_SCREENSHOT}
             alt=""
             fill
-            className="object-cover"
+            className="object-cover object-top"
             sizes="280px"
           />
-          <div className="absolute inset-0 rounded-3xl ring-1 ring-inset ring-white/10" />
         </div>
       </div>
       <div className="lg:order-1">
@@ -53,7 +53,6 @@ export function TradeOnTheGoSection() {
             {t("tradeGo.cta")}
           </Link>
         </div>
-        <p className="mt-4 text-[10px] text-[var(--landing-muted)]">{t("photoCredit")}</p>
       </div>
     </section>
   );

@@ -62,7 +62,7 @@ export function InstrumentBar({
     !Number.isNaN(chNum) && chNum >= 0 ? "text-[var(--buy)]" : "text-[var(--sell)]";
 
   return (
-    <div className="mb-2 space-y-2 border border-[var(--border)] bg-[var(--panel)] px-3 py-2">
+    <div className="mb-2 w-full min-w-0 space-y-2 border border-[var(--border)] bg-[var(--panel)] px-3 py-2">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex flex-wrap items-center gap-3">
           <CryptoIcon symbol={base} size={36} className="ring-1 ring-[var(--border)]" />

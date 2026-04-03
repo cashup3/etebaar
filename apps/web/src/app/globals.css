@@ -1,5 +1,12 @@
 @import "tailwindcss";
 
+/* Prevent horizontal scroll from full-bleed / grid children; keep pinch-zoom for a11y */
+html {
+  overflow-x: clip;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
 /* Etebaar — brand: navy #16274A + gold #FFC323 */
 :root,
 html[data-theme="dark"] {

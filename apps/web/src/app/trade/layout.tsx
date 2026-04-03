@@ -8,9 +8,9 @@ export default function TradeLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div>
-      <div className="mx-auto max-w-[1920px] px-2 pb-4 pt-2 sm:px-3">{children}</div>
-      <div className="mx-auto max-w-[1920px] px-2 pb-6 sm:px-3">
+    <div className="w-full min-w-0">
+      <div className="mx-auto w-full min-w-0 max-w-[1920px] px-2 pb-4 pt-2 sm:px-3">{children}</div>
+      <div className="mx-auto w-full min-w-0 max-w-[1920px] px-2 pb-6 sm:px-3">
         <MarketingBanner variant="trade" />
       </div>
     </div>

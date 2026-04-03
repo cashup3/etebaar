@@ -16,7 +16,7 @@ type Props = {
 export function MarketingBanner({
   title,
   subtitle,
-  ctaHref = "/signup",
+  ctaHref = "/login?signup=1",
   ctaLabel,
   variant = "markets",
 }: Props) {
@@ -28,14 +28,16 @@ export function MarketingBanner({
     ctaLabel ?? (variant === "trade" ? t("mBanner.cta") : t("markets.bannerCta"));
 
   return (
-    <div className="relative mt-10 overflow-hidden rounded-xl border border-[var(--border)]">
-      <div className="relative aspect-[21/5] min-h-[140px] w-full sm:aspect-[21/4]">
+    <div className="relative mt-10 w-full min-w-0 overflow-hidden rounded-xl border border-[var(--border)]">
+      <div className="relative aspect-[21/5] min-h-[140px] w-full min-w-0 sm:aspect-[21/4]">
         <Image src={src} alt="" fill className="object-cover" sizes="100vw" />
         <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/55 to-black/25 rtl:bg-gradient-to-l" />
       </div>
-      <div className="absolute inset-0 flex flex-col justify-center px-5 py-6 sm:px-8">
-        <h2 className="max-w-xl text-lg font-bold text-white sm:text-xl">{tit}</h2>
-        {sub ? <p className="mt-1 max-w-xl text-sm text-white/80">{sub}</p> : null}
+      <div className="absolute inset-0 flex flex-col justify-center px-4 py-5 sm:px-8 sm:py-6">
+        <h2 className="max-w-full break-words text-base font-bold text-white sm:max-w-xl sm:text-xl">{tit}</h2>
+        {sub ? (
+          <p className="mt-1 max-w-full break-words text-sm text-white/80 sm:max-w-xl">{sub}</p>
+        ) : null}
         <Link
           href={ctaHref}
           className="mt-4 inline-flex w-fit rounded-md bg-[var(--gold)] px-4 py-2 text-xs font-semibold text-[var(--gold-ink)] hover:bg-[var(--gold-hover)] sm:text-sm"
@@ -43,7 +45,6 @@ export function MarketingBanner({
           {cta}
         </Link>
       </div>
-      <p className="absolute bottom-2 end-3 text-[9px] text-white/50">{t("photoCredit")}</p>
     </div>
   );
 }

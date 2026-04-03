@@ -1,40 +1,38 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect } from "react";
-import { CryptoIcon } from "@/components/CryptoIcon";
-import { ChartPane } from "@/components/trade/ChartPane";
+import { useEffect, useMemo } from "react";
+import { CurrencyIcon } from "@/components/CurrencyIcon";
+import { FiatFxChart } from "@/components/markets/FiatFxChart";
 import { useLocale } from "@/i18n/LocaleProvider";
 import { formatToman } from "@/lib/formatToman";
-import { pairBaseAsset } from "@/lib/marketSymbol";
 
-export type PreviewTicker = {
-  symbol: string;
-  last: string;
-  changePct: string;
-  volume: string;
-  high: string;
-  low: string;
-  lastIrt?: number | null;
-  highIrt?: number | null;
-  lowIrt?: number | null;
+export type FiatPreviewRow = {
+  code: string;
+  /** Live toman per 1 unit from convert rates. */
+  tomanPerUnit: number;
 };
 
-function fmt(n: string | undefined) {
-  if (n === undefined) return "—";
-  const x = Number.parseFloat(n);
-  if (Number.isNaN(x)) return n;
-  return x.toLocaleString(undefined, { maximumFractionDigits: 8 });
-}
-
-export function MarketPreviewDrawer({
+export function CurrencyPreviewDrawer({
   row,
   onClose,
 }: {
-  row: PreviewTicker | null;
+  row: FiatPreviewRow | null;
   onClose: () => void;
 }) {
   const { t, locale } = useLocale();
+
+  const currencyNames = useMemo(
+    () => new Intl.DisplayNames(locale === "fa" ? "fa-IR" : "en-US", { type: "currency" }),
+    [locale],
+  );
+
+  let label: string;
+  try {
+    label = row ? (currencyNames.of(row.code) ?? row.code) : "";
+  } catch {
+    label = row?.code ?? "";
+  }
 
   useEffect(() => {
     if (!row) return;
@@ -52,13 +50,8 @@ export function MarketPreviewDrawer({
 
   if (!row) return null;
 
-  const base = pairBaseAsset(row.symbol);
-  const ch = Number.parseFloat(row.changePct);
-  const up = !Number.isNaN(ch) && ch >= 0;
-  const chCls = up ? "text-[var(--buy)]" : "text-[var(--sell)]";
-
   return (
-    <div className="fixed inset-0 z-50" role="dialog" aria-modal="true" aria-labelledby="market-preview-title">
+    <div className="fixed inset-0 z-50" role="dialog" aria-modal="true" aria-labelledby="fiat-preview-title">
       <button
         type="button"
         className="absolute inset-0 bg-[var(--text)]/20 backdrop-blur-[2px] transition-opacity dark:bg-black/50"
@@ -68,13 +61,13 @@ export function MarketPreviewDrawer({
       <aside className="absolute end-0 top-0 flex h-[100dvh] max-h-[100dvh] min-h-0 w-full max-w-full flex-col border-s border-[var(--border)] bg-[var(--bg-elevated)] pt-[env(safe-area-inset-top,0px)] shadow-2xl sm:max-w-lg md:max-w-xl">
         <div className="flex items-start justify-between gap-3 border-b border-[var(--border)] px-4 py-4">
           <div className="flex min-w-0 items-center gap-3">
-            <CryptoIcon symbol={row.symbol} size={48} className="ring-2 ring-[var(--border)]" />
+            <CurrencyIcon code={row.code} size={48} className="ring-2 ring-[var(--border)]" />
             <div className="min-w-0">
-              <h2 id="market-preview-title" className="truncate font-mono text-lg font-semibold text-[var(--text)]">
-                {base}
-                <span className="font-normal text-[var(--muted)]">/USDT</span>
+              <h2 id="fiat-preview-title" className="truncate font-mono text-lg font-semibold text-[var(--text)]">
+                {row.code}
               </h2>
-              <p className="font-mono text-[10px] text-[var(--muted-dim)]">{t("markets.refSpot")}</p>
+              <p className="truncate font-mono text-[10px] text-[var(--muted-dim)]">{label}</p>
+              <p className="mt-1 font-mono text-[10px] text-[var(--muted-dim)]">{t("markets.fiatRefNote")}</p>
             </div>
           </div>
           <button
@@ -90,50 +83,30 @@ export function MarketPreviewDrawer({
           <div className="flex flex-wrap items-baseline justify-between gap-2">
             <div>
               <span className="text-2xl font-semibold tabular-nums text-[var(--text)]">
-                {formatToman(row.lastIrt ?? null, locale)}
+                {formatToman(Math.round(row.tomanPerUnit), locale)}
               </span>
-              <span className="mt-0.5 block text-[10px] text-[var(--muted-dim)]">
-                {t("markets.usdtRef")} {fmt(row.last)}
-              </span>
+              <span className="mt-0.5 block text-[10px] text-[var(--muted-dim)]">{t("markets.fiatTomanPerUnit")}</span>
             </div>
-            <span className={`text-sm font-medium tabular-nums ${chCls}`}>
-              {up ? "+" : ""}
-              {row.changePct}%
-            </span>
-          </div>
-          <div className="flex flex-wrap gap-x-4 gap-y-1 text-[10px] text-[var(--muted)]">
-            <span>
-              <span className="text-[var(--muted-dim)]">{t("markets.high")}</span>{" "}
-              {formatToman(row.highIrt ?? null, locale)}
-              <span className="text-[var(--muted-dim)]"> ({fmt(row.high)})</span>
-            </span>
-            <span>
-              <span className="text-[var(--muted-dim)]">{t("markets.low")}</span>{" "}
-              {formatToman(row.lowIrt ?? null, locale)}
-              <span className="text-[var(--muted-dim)]"> ({fmt(row.low)})</span>
-            </span>
-            <span>
-              <span className="text-[var(--muted-dim)]">{t("markets.vol")}</span> {fmt(row.volume)}
-            </span>
           </div>
         </div>
 
         <div className="flex min-h-0 flex-1 flex-col overflow-hidden p-3">
           <p className="mb-2 font-mono text-[10px] font-medium uppercase tracking-wider text-[var(--muted-dim)]">
-            {t("markets.chartPreview")}
+            {t("markets.fiatChartTitle")}
           </p>
+          <p className="mb-2 font-mono text-[9px] leading-relaxed text-[var(--muted-dim)]">{t("markets.fiatChartSub")}</p>
           <div className="min-h-[280px] flex-1 overflow-hidden rounded-md border border-[var(--border)]">
-            <ChartPane symbol={row.symbol} compact className="min-h-[280px] border-0" />
+            <FiatFxChart code={row.code} compact className="min-h-[280px] border-0" />
           </div>
         </div>
 
         <div className="border-t border-[var(--border)] p-4">
           <Link
-            href={`/trade?symbol=${encodeURIComponent(row.symbol)}`}
+            href="/convert"
             onClick={onClose}
             className="flex w-full items-center justify-center rounded-md bg-[var(--accent)] py-3 font-mono text-sm font-semibold text-[var(--gold-ink)] transition-colors hover:opacity-95"
           >
-            {t("markets.openTerminal")}
+            {t("markets.openConvert")}
           </Link>
         </div>
       </aside>

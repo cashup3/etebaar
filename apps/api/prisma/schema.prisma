@@ -11,11 +11,24 @@ model User {
   id           String        @id @default(uuid())
   email        String?       @unique
   passwordHash String?
+  fullName     String?
+  phone        String?
   createdAt    DateTime      @default(now())
   accounts     Account[]
   orders       Order[]
   deposits     Deposit[]
   withdrawals  Withdrawal[]
+}
+
+/// One-time email codes for signup (hashed). Old rows for the same email are cleared on resend.
+model SignupVerificationCode {
+  id        String   @id @default(uuid())
+  email     String
+  codeHash  String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([email, createdAt])
 }
 
 /// One row per (user, bucket, asset). Balance is the running total for that bucket.

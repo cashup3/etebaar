@@ -127,10 +127,10 @@ export function ChartPane({
 
   return (
     <div
-      className={`relative flex flex-1 flex-col overflow-hidden border border-[var(--border)] bg-[var(--panel)] ${
+      className={`relative flex min-h-0 w-full min-w-0 flex-1 flex-col overflow-hidden border border-[var(--border)] bg-[var(--panel)] ${
         compact
           ? "min-h-[260px]"
-          : "min-h-[320px] sm:min-h-[400px] lg:min-h-[calc(100vh-220px)]"
+          : "min-h-[300px] sm:min-h-[380px] lg:min-h-[calc(100dvh-220px)]"
       } ${className}`.trim()}
     >
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[var(--border)] px-2 py-1.5">

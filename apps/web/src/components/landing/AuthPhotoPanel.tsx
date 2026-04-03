@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { STOCK, STOCK_ATTRIBUTION } from "@/components/landing/stockPhotos";
+import { STOCK } from "@/components/landing/stockPhotos";
 import { useLocale } from "@/i18n/LocaleProvider";
 
 export function AuthPhotoPanel() {
@@ -21,7 +21,6 @@ export function AuthPhotoPanel() {
       <div className="relative z-[1] mt-auto p-8">
         <p className="text-lg font-semibold text-white">{t("authPanel.title")}</p>
         <p className="mt-2 max-w-sm text-sm text-white/85">{t("authPanel.sub")}</p>
-        <p className="mt-4 text-[10px] text-white/50">{STOCK_ATTRIBUTION}</p>
       </div>
     </div>
   );

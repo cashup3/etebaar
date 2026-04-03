@@ -63,11 +63,13 @@ export function Header() {
       className="sticky top-0 z-50 overflow-visible border-b border-[var(--landing-border)] bg-[var(--landing-bg)]/95 backdrop-blur-md"
       style={{ height: "var(--header-h)" }}
     >
-      <div className="mx-auto flex h-full max-w-[1920px] items-center justify-between gap-2 px-2 sm:px-4">
+      <div className="mx-auto flex h-full w-full min-w-0 max-w-[1920px] items-center justify-between gap-2 px-2 sm:px-4">
         <div className="flex min-w-0 flex-1 items-center gap-2 sm:gap-4 lg:gap-8">
-          <Link href="/" className="flex shrink-0 items-center gap-2">
+          <Link href="/" className="flex shrink-0 items-center gap-1.5 sm:gap-2">
             <LogoMark />
-            <span className="font-semibold tracking-wide text-[var(--gold)]">ETEBAAR</span>
+            <span className="whitespace-nowrap font-semibold tracking-wide text-[var(--gold)] text-sm sm:text-base">
+              ETEBAAR
+            </span>
           </Link>
           <HeaderNavDesktop pathname={pathname} />
           <HeaderNavMobile />
@@ -119,7 +121,7 @@ export function Header() {
               <button
                 type="button"
                 onClick={() => logout()}
-                className="rounded-md px-2 py-1.5 font-sans text-xs text-[var(--nav-icon)] hover:bg-[var(--header-nav-hover)]"
+                className="touch-manipulation rounded-md px-2 py-1.5 font-sans text-xs text-[var(--nav-icon)] hover:bg-[var(--header-nav-hover)]"
               >
                 {t("header.logout")}
               </button>
@@ -133,7 +135,7 @@ export function Header() {
                 {t("header.login")}
               </Link>
               <Link
-                href="/signup"
+                href="/login?signup=1"
                 className="rounded-md bg-[var(--gold)] px-3 py-1.5 font-sans text-xs font-semibold text-[var(--gold-ink)] shadow-sm hover:bg-[var(--gold-hover)] sm:text-sm"
               >
                 {t("header.signup")}

@@ -28,7 +28,7 @@ export function OrderTicket({
   const { t } = useLocale();
   const buyActive = side === "BUY";
   return (
-    <div className="flex h-full min-h-[320px] flex-col border border-[var(--border)] bg-[var(--panel)] sm:min-h-[400px] lg:min-h-[calc(100vh-220px)]">
+    <div className="flex h-full min-h-[320px] min-w-0 flex-col border border-[var(--border)] bg-[var(--panel)] sm:min-h-[400px] lg:min-h-[calc(100dvh-220px)]">
       <div className="flex border-b border-[var(--border)]">
         <button
           type="button"

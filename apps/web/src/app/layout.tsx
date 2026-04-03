@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono, Vazirmatn } from "next/font/google";
 import "./globals.css";
 import { Footer } from "@/components/Footer";
@@ -27,6 +27,12 @@ export const metadata: Metadata = {
     "Etebaar is an online cryptocurrency exchange and price analyzer, founded in Tbilisi, Georgia. Trade spot markets, track live prices, and convert across fiat and crypto.",
 };
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -38,9 +44,9 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} ${vazirmatn.variable} min-h-screen antialiased`}
       >
         <Providers>
-          <div className="flex min-h-screen flex-col">
+          <div className="flex min-h-[100dvh] w-full min-w-0 flex-col">
             <Header />
-            <main className="flex w-full flex-1 flex-col">{children}</main>
+            <main className="flex w-full min-w-0 flex-1 flex-col">{children}</main>
             <Footer />
           </div>
         </Providers>

@@ -29,7 +29,7 @@ export function LifestyleVideoRow() {
   ] as const;
 
   return (
-    <section className="mt-16 sm:mt-20" aria-labelledby="crypto-gallery-heading">
+    <section className="mt-16 w-full min-w-0 sm:mt-20" aria-labelledby="crypto-gallery-heading">
       <h2 id="crypto-gallery-heading" className="mb-4 text-lg font-semibold text-[var(--landing-text)]">
         {t("cryptoGallery.title")}
       </h2>
@@ -55,7 +55,6 @@ export function LifestyleVideoRow() {
           </Link>
         ))}
       </div>
-      <p className="mt-3 text-center text-[10px] text-[var(--landing-muted)]">{t("photoCredit")}</p>
     </section>
   );
 }

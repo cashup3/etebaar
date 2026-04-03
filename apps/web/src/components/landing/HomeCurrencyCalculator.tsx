@@ -127,7 +127,7 @@ export function HomeCurrencyCalculator({ usdPerUnit, convertLoad }: HomeCurrency
   const presetIRT = ["1000000", "5000000", "10000000"] as const;
 
   return (
-    <div className="relative mt-10 max-w-xl">
+    <div className="relative mt-10 w-full min-w-0 max-w-xl">
       <div
         className="pointer-events-none absolute -inset-px rounded-[1.35rem] opacity-80"
         style={{

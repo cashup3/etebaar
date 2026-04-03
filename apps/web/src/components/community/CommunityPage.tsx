@@ -9,7 +9,7 @@ export function CommunityPage() {
   const { t } = useLocale();
 
   return (
-    <div className="mx-auto min-h-[50vh] max-w-3xl px-4 py-10 pb-20 sm:px-6">
+    <div className="mx-auto min-h-[50vh] w-full min-w-0 max-w-3xl px-4 py-10 pb-20 sm:px-6">
       <Link href="/" className="mb-6 inline-block font-mono text-xs text-[var(--muted)] hover:text-[var(--accent)]">
         {t("pages.common.backHome")}
       </Link>
@@ -17,7 +17,7 @@ export function CommunityPage() {
         {t("pages.community.title")}
       </h1>
       <p className="mt-3 font-mono text-sm leading-relaxed text-[var(--muted)]">{t("pages.community.subtitle")}</p>
-      <div className="mt-8 space-y-4 font-mono text-sm leading-relaxed text-[var(--landing-muted)]">
+      <div className="mt-8 space-y-4 break-words font-mono text-sm leading-relaxed text-[var(--landing-muted)]">
         <p>{t("pages.community.p1")}</p>
         <p>{t("pages.community.p2")}</p>
       </div>

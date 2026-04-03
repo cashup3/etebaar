@@ -8,7 +8,7 @@ export const footerAbout: FooterLinkKey[] = [
   { labelKey: "footer.aboutHome", href: "/" },
   { labelKey: "footer.aboutMarkets", href: "/markets" },
   { labelKey: "footer.aboutSpot", href: "/trade" },
-  { labelKey: "footer.aboutSignup", href: "/signup" },
+  { labelKey: "footer.aboutSignup", href: "/login?signup=1" },
   { labelKey: "footer.aboutLogin", href: "/login" },
   { labelKey: "footer.aboutAnnounce", href: "/announcements" },
   { labelKey: "footer.aboutBlog", href: "/blog" },

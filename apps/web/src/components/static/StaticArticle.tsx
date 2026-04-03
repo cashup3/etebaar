@@ -28,7 +28,7 @@ export function StaticArticle({ slug, backKey = "pages.common.backHome", backHre
   }
 
   return (
-    <div className="mx-auto min-h-[50vh] max-w-3xl px-4 py-10 pb-20 sm:px-6">
+    <div className="mx-auto min-h-[50vh] w-full min-w-0 max-w-3xl px-4 py-10 pb-20 sm:px-6">
       <Link
         href={backHref}
         className="mb-6 inline-block font-mono text-xs text-[var(--muted)] hover:text-[var(--accent)]"
@@ -41,9 +41,9 @@ export function StaticArticle({ slug, backKey = "pages.common.backHome", backHre
           {subtitle !== `${base}.subtitle` && (
             <p className="mt-3 font-mono text-sm leading-relaxed text-[var(--muted)]">{subtitle}</p>
           )}
-          <div className="mt-8 max-w-none font-mono text-sm leading-relaxed text-[var(--text)]">
+          <div className="mt-8 max-w-none break-words font-mono text-sm leading-relaxed text-[var(--text)]">
             {paragraphs.map((p, i) => (
-              <p key={i} className="mb-4 text-[var(--landing-muted)] [&:last-child]:mb-0">
+              <p key={i} className="mb-4 break-words text-[var(--landing-muted)] [&:last-child]:mb-0">
                 {p}
               </p>
             ))}

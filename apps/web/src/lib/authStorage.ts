@@ -1,7 +1,12 @@
 const TOKEN = "etebaar_token";
 const USER = "etebaar_user";
 
-export type StoredUser = { id: string; email: string };
+export type StoredUser = {
+  id: string;
+  email: string;
+  fullName?: string | null;
+  phone?: string | null;
+};
 
 export function getToken(): string | null {
   if (typeof window === "undefined") return null;

@@ -118,7 +118,7 @@ export function ConvertClient() {
   };
 
   return (
-    <div className="mx-auto max-w-2xl space-y-8 px-3 pb-20 pt-6 sm:px-4">
+    <div className="mx-auto w-full min-w-0 max-w-2xl space-y-8 px-3 pb-20 pt-6 sm:px-4">
       <div>
         <Link href="/" className="mb-2 inline-block font-mono text-xs text-[var(--muted)] hover:text-[var(--accent)]">
           {t("convertPage.back")}

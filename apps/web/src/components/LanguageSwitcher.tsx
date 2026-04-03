@@ -12,7 +12,7 @@ export function LanguageSwitcher({ className }: { className?: string }) {
       <button
         type="button"
         onClick={() => setLocale(l)}
-        className={`rounded-md px-2 py-1 text-xs font-medium transition-colors ${
+        className={`touch-manipulation rounded-md px-2 py-1 text-xs font-medium transition-colors ${
           on
             ? "bg-[var(--gold-dim)] text-[var(--gold)]"
             : "text-[var(--landing-muted)] hover:text-[var(--nav-icon)]"
