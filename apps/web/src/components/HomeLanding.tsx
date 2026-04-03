@@ -17,6 +17,10 @@ type Ticker = {
   changePct: string;
   volume: string;
   lastIrt?: number | null;
+  /** If set, row links here instead of the trade terminal (e.g. USDT→toman reference → /convert). */
+  linkHref?: string;
+  /** Reference row: hide 24h % swing. */
+  isRateRow?: boolean;
 };
 
 /** Prefer these when building the “Popular” strip (first wins among available tickers). */
@@ -39,23 +43,36 @@ const TRUST_STRIP = [
 export function HomeLanding() {
   const { t, locale } = useLocale();
   const [tickers, setTickers] = useState<Ticker[]>([]);
+  const [tomanPerUsdt, setTomanPerUsdt] = useState<number | null>(null);
   const [mktLoad, setMktLoad] = useState<"loading" | "ok" | "error">("loading");
   const [tab, setTab] = useState<"popular" | "new">("popular");
 
   useEffect(() => {
-    void fetch("/api/market/tickers?quote=USDT")
-      .then((r) => {
-        if (!r.ok) throw new Error(String(r.status));
-        return r.json();
-      })
-      .then((j: { tickers: Ticker[] }) => {
-        setTickers(j.tickers ?? []);
+    void (async () => {
+      try {
+        const [tickRes, convertRes] = await Promise.all([
+          fetch("/api/market/tickers?quote=USDT"),
+          fetch("/api/convert/rates"),
+        ]);
+        if (!tickRes.ok) throw new Error(String(tickRes.status));
+        const tj = (await tickRes.json()) as { tickers: Ticker[] };
+        setTickers(tj.tickers ?? []);
+
+        if (convertRes.ok) {
+          const cj = (await convertRes.json()) as { usdPerUnit?: Record<string, number> };
+          const irtUsd = cj.usdPerUnit?.IRT;
+          if (typeof irtUsd === "number" && irtUsd > 0 && Number.isFinite(irtUsd)) {
+            setTomanPerUsdt(Math.round(1 / irtUsd));
+          }
+        }
+
         setMktLoad("ok");
-      })
-      .catch(() => {
+      } catch {
         setTickers([]);
+        setTomanPerUsdt(null);
         setMktLoad("error");
-      });
+      }
+    })();
   }, []);
 
   const popularRows = useMemo(() => {
@@ -75,7 +92,26 @@ export function HomeLanding() {
     return [...tickers].slice(-6).reverse();
   }, [tickers]);
 
-  const displayRows = tab === "popular" ? popularRows : newRows.length ? newRows : popularRows;
+  const usdtTomanRow = useMemo((): Ticker | null => {
+    if (tomanPerUsdt == null || tomanPerUsdt <= 0) return null;
+    return {
+      symbol: "USDTUSDT",
+      last: "1",
+      changePct: "0",
+      volume: "—",
+      lastIrt: tomanPerUsdt,
+      linkHref: "/convert",
+      isRateRow: true,
+    };
+  }, [tomanPerUsdt]);
+
+  const popularWithUsdt = useMemo(() => {
+    if (!usdtTomanRow) return popularRows;
+    return [usdtTomanRow, ...popularRows].slice(0, 7);
+  }, [usdtTomanRow, popularRows]);
+
+  const displayRows =
+    tab === "popular" ? popularWithUsdt : newRows.length ? newRows : popularWithUsdt;
 
   return (
     <div className="relative min-h-[calc(100vh-var(--header-h))] bg-[var(--landing-bg)] text-[var(--landing-text)]">
@@ -199,16 +235,19 @@ export function HomeLanding() {
                   const ch = Number.parseFloat(r.changePct);
                   const up = !Number.isNaN(ch) && ch >= 0;
                   const base = pairBaseAsset(r.symbol);
+                  const href = r.linkHref ?? `/trade?symbol=${encodeURIComponent(r.symbol)}`;
                   return (
-                    <li key={r.symbol}>
+                    <li key={r.isRateRow ? "usdt-toman-ref" : r.symbol}>
                       <Link
-                        href={`/trade?symbol=${encodeURIComponent(r.symbol)}`}
+                        href={href}
                         className="flex items-center gap-3 px-4 py-3 transition-colors hover:bg-[var(--landing-row-hover)]"
                       >
                         <CryptoIcon symbol={r.symbol} size={32} className="ring-2 ring-[var(--landing-border)]" />
                         <div className="min-w-0 flex-1">
                           <p className="text-sm font-semibold text-[var(--landing-text)]">{base}</p>
-                          <p className="truncate text-xs text-[var(--landing-muted)]">{r.symbol}</p>
+                          <p className="truncate text-xs text-[var(--landing-muted)]">
+                            {r.isRateRow ? t("home.usdtTomanSub") : r.symbol}
+                          </p>
                         </div>
                         <div className="text-end">
                           <p className="text-sm font-medium tabular-nums text-[var(--landing-text)]">
@@ -217,10 +256,14 @@ export function HomeLanding() {
                           <p className="text-[10px] tabular-nums text-[var(--landing-muted)]">
                             {t("markets.usdtRef")} {r.last}
                           </p>
-                          <p className={`text-xs font-medium tabular-nums ${up ? "text-[var(--buy)]" : "text-[var(--sell)]"}`}>
-                            {up ? "+" : ""}
-                            {r.changePct}%
-                          </p>
+                          {r.isRateRow ? (
+                            <p className="text-xs font-medium tabular-nums text-[var(--landing-muted)]">—</p>
+                          ) : (
+                            <p className={`text-xs font-medium tabular-nums ${up ? "text-[var(--buy)]" : "text-[var(--sell)]"}`}>
+                              {up ? "+" : ""}
+                              {r.changePct}%
+                            </p>
+                          )}
                         </div>
                       </Link>
                     </li>

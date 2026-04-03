@@ -172,6 +172,7 @@ const enTree = {
     marketsErr:
       "Could not load live prices (reference feed unreachable). Check your connection or try again later.",
     marketsEmpty: "No markets to show.",
+    usdtTomanSub: "1 USDT · reference rate",
     news: "News",
     newsView: "View all →",
     trustNote: "Industry notes · Illustrative only",
@@ -490,6 +491,7 @@ const faTree = {
     marketsErr:
       "بارگذاری قیمت‌های زنده ممکن نشد (فید مرجع در دسترس نیست). اتصال را بررسی کنید یا بعداً دوباره تلاش کنید.",
     marketsEmpty: "بازاری برای نمایش نیست.",
+    usdtTomanSub: "۱ USDT · نرخ مرجع",
     news: "اخبار",
     newsView: "مشاهده همه ←",
     trustNote: "یادداشت صنعتی · صرفاً نمایشی",
