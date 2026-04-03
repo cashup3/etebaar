@@ -1,0 +1,14 @@
+{
+  "source": "Example — replace with your site or worker name",
+  "updatedAt": "2026-04-01T12:00:00.000Z",
+  "tomanPerUsdt": 105000,
+  "usd": { "buy": 104500, "sell": 105200 },
+  "eur": { "buy": 113000, "sell": 114200 },
+  "gbp": { "sell": 132000 },
+  "gold18": { "sell": 8500000 },
+  "mithqal": { "sell": 49200000 },
+  "items": [
+    { "label": "سکه امامی", "buy": 78500000, "sell": 79200000 },
+    { "label": "سکه بهار آزادی", "buy": 66200000, "sell": 66800000 }
+  ]
+}

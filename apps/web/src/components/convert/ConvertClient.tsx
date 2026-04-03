@@ -12,6 +12,11 @@ type RatesPayload = {
   cryptoCodes: string[];
   sources: { irt: string; fx: string; crypto: string };
   note: string;
+  iranOpenMarket?: {
+    label?: string;
+    updatedAt?: string;
+    rows: Array<{ label: string; buy?: number; sell?: number }>;
+  };
 };
 
 function parseAmount(raw: string): number {
@@ -258,13 +263,59 @@ export function ConvertClient() {
         )}
       </div>
 
+      {data?.iranOpenMarket && data.iranOpenMarket.rows.length > 0 && (
+        <div className="rounded-lg border border-[var(--border)] bg-[var(--panel)] p-4">
+          <p className="font-mono text-[10px] font-semibold uppercase tracking-wider text-[var(--muted-dim)]">
+            {t("convertPage.iranPanelTitle")}
+          </p>
+          {data.iranOpenMarket.label ? (
+            <p className="mt-1 font-mono text-[10px] text-[var(--muted)]">{data.iranOpenMarket.label}</p>
+          ) : null}
+          <div className="mt-3 overflow-x-auto">
+            <table className="w-full min-w-[280px] text-start font-mono text-[10px]">
+              <thead className="border-b border-[var(--border)] text-[var(--muted-dim)]">
+                <tr>
+                  <th className="py-1.5 pe-2 font-medium">{locale === "fa" ? "نام" : "Item"}</th>
+                  <th className="py-1.5 pe-2 font-medium">{t("convertPage.iranBuy")}</th>
+                  <th className="py-1.5 font-medium">{t("convertPage.iranSell")}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {data.iranOpenMarket.rows.map((r) => (
+                  <tr key={r.label} className="border-b border-[var(--border)]/60">
+                    <td className="py-1.5 pe-2 text-[var(--text)]">{r.label}</td>
+                    <td className="py-1.5 pe-2 tabular-nums text-[var(--muted)]">
+                      {r.buy != null ? nfIrt.format(Math.round(r.buy)) : "—"}
+                    </td>
+                    <td className="py-1.5 tabular-nums text-[var(--muted)]">
+                      {r.sell != null ? nfIrt.format(Math.round(r.sell)) : "—"}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          {data.iranOpenMarket.updatedAt ? (
+            <p className="mt-2 font-mono text-[9px] text-[var(--muted-dim)]">
+              {t("convertPage.updated")}{" "}
+              {new Date(data.iranOpenMarket.updatedAt).toLocaleString(locale === "fa" ? "fa-IR" : "en-US")}
+            </p>
+          ) : null}
+        </div>
+      )}
+
       <div className="rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] p-4">
         <p className="font-mono text-[10px] font-semibold uppercase tracking-wider text-[var(--muted-dim)]">
           {t("convertPage.sources")}
         </p>
         <ul className="mt-2 space-y-1 font-mono text-[10px] text-[var(--muted)]">
           <li>
-            IRT: {data?.sources.irt === "nobitex" ? t("convertPage.srcNobitex") : t("convertPage.srcFallback")}
+            IRT:{" "}
+            {data?.sources.irt === "nobitex"
+              ? t("convertPage.srcNobitex")
+              : data?.sources.irt === "iran-json"
+                ? t("convertPage.srcIranJson")
+                : t("convertPage.srcFallback")}
           </li>
           <li>
             {t("convertPage.srcFiat")}: {data?.sources.fx === "frankfurter-ecb" ? "Frankfurter / ECB" : "—"}

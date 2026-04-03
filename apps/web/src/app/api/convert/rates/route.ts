@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { fetchIranRatesFromEnv } from "@/lib/iranRatesJson";
 
 /** Cache aggregated rates briefly at the edge. */
 export const revalidate = 30;
@@ -111,16 +112,30 @@ async function fetchBinanceUsdPerCrypto(): Promise<Record<string, number>> {
 
 export async function GET() {
   const fallbackToman = Number.parseFloat(process.env.FALLBACK_TOMAN_PER_USDT ?? "") || DEFAULT_TOMAN_FALLBACK;
+  const iranDisplayOnly =
+    process.env.IRAN_RATES_DISPLAY_ONLY === "1" || process.env.IRAN_RATES_DISPLAY_ONLY?.toLowerCase() === "true";
 
-  const [nobitex, fx, crypto] = await Promise.all([
+  const [nobitex, iranJson, fx, crypto] = await Promise.all([
     fetchTomanPerUsdt(),
+    fetchIranRatesFromEnv(),
     fetchFrankfurterUsdTargets(),
     fetchBinanceUsdPerCrypto(),
   ]);
 
-  const irtMeta = nobitex
-    ? { source: "nobitex" as const, tomanPerUsdt: nobitex.tomanPerUsdt }
-    : { source: "fallback" as const, tomanPerUsdt: fallbackToman };
+  const irtFromIran = iranJson && !iranDisplayOnly;
+  const irtMeta = irtFromIran
+    ? { source: "iran-json" as const, tomanPerUsdt: iranJson.tomanPerUsdt }
+    : nobitex
+      ? { source: "nobitex" as const, tomanPerUsdt: nobitex.tomanPerUsdt }
+      : { source: "fallback" as const, tomanPerUsdt: fallbackToman };
+
+  const iranOpenMarket = iranJson
+    ? {
+        label: iranJson.sourceLabel,
+        updatedAt: iranJson.updatedAt,
+        rows: iranJson.rows,
+      }
+    : undefined;
 
   /** USD value of 1 unit of asset (1 IRT = 1 toman here). */
   const usdPerUnit: Record<string, number> = {
@@ -154,7 +169,8 @@ export async function GET() {
       fx: Object.keys(fx).length ? "frankfurter-ecb" : "unavailable",
       crypto: Object.keys(crypto).length ? "binance-usdt" : "unavailable",
     },
+    iranOpenMarket: iranOpenMarket ?? undefined,
     note:
-      "Reference rates only. IRT uses Nobitex USDT/IRT (rial→toman ÷10) or a fallback; fiat crosses via Frankfurter (ECB); crypto via Binance USDT last. Not for settlement or tax.",
+      "Reference rates only. IRT uses IRAN_RATES_JSON_URL when configured (see .env.example), else Nobitex USDT/IRT (rial→toman ÷10) or a fallback; fiat crosses via Frankfurter (ECB); crypto via Binance USDT last. Not for settlement or tax.",
   });
 }
