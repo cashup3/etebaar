@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useId, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { useLocale } from "@/i18n/LocaleProvider";
 
 function ChevronDown({ className }: { className?: string }) {
@@ -230,75 +231,90 @@ export function HeaderNavMobile() {
   const { t } = useLocale();
   const panelId = useId();
   const [open, setOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const close = useCallback(() => setOpen(false), []);
-  const ref = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLDivElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") close();
     };
-    const onPointer = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) close();
-    };
     document.addEventListener("keydown", onKey);
-    document.addEventListener("mousedown", onPointer);
-    return () => {
-      document.removeEventListener("keydown", onKey);
-      document.removeEventListener("mousedown", onPointer);
-    };
+    return () => document.removeEventListener("keydown", onKey);
   }, [open, close]);
 
-  return (
-    <div className="relative md:hidden" ref={ref}>
+  const panel = open ? (
+    <>
+      {/*
+        Backdrop below the sticky header only so the menu trigger (in the header) stays tappable
+        to toggle closed. Full-viewport overlays were stacking above the header and eating taps.
+      */}
       <button
         type="button"
-        className="flex items-center gap-1 rounded-md border border-[var(--landing-border)] px-2 py-1.5 font-mono text-[10px] text-[var(--landing-muted)] hover:text-[var(--nav-icon)]"
+        className="fixed inset-x-0 bottom-0 top-[var(--header-h)] z-[90] bg-black/25 md:hidden"
+        aria-label={t("markets.closePanel")}
+        onClick={close}
+      />
+      <div
+        id={panelId}
+        ref={panelRef}
+        className="fixed start-2 end-2 top-[calc(var(--header-h)+6px)] z-[100] max-h-[min(70vh,520px)] overflow-y-auto rounded-lg border border-[var(--landing-border)] bg-[var(--landing-card)] p-3 shadow-2xl md:hidden"
+        role="menu"
+      >
+        <div className="space-y-3 font-sans text-sm text-[var(--landing-text)]">
+          <div>
+            <p className="mb-1 font-mono text-[9px] uppercase tracking-wider text-[var(--landing-muted)]">
+              {t("nav.mobileTrade")}
+            </p>
+            <Link href="/trade" className="block rounded-md px-2 py-2 hover:bg-[var(--landing-row-hover)]" onClick={close}>
+              {t("nav.spot")}
+            </Link>
+            <span className="block cursor-default rounded-md px-2 py-2 text-[var(--landing-muted)]">
+              {t("nav.mobileFutures")}
+            </span>
+          </div>
+          <div>
+            <p className="mb-1 font-mono text-[9px] uppercase tracking-wider text-[var(--landing-muted)]">
+              {t("nav.explore")}
+            </p>
+            <Link href="/buy" className="block rounded-md px-2 py-2 hover:bg-[var(--landing-row-hover)]" onClick={close}>
+              {t("nav.buyCrypto")}
+            </Link>
+            <Link href="/markets" className="block rounded-md px-2 py-2 hover:bg-[var(--landing-row-hover)]" onClick={close}>
+              {t("nav.markets")}
+            </Link>
+            <Link href="/convert" className="block rounded-md px-2 py-2 hover:bg-[var(--landing-row-hover)]" onClick={close}>
+              {t("nav.convert")}
+            </Link>
+            <Link href="/" className="block rounded-md px-2 py-2 hover:bg-[var(--landing-row-hover)]" onClick={close}>
+              {t("nav.home")}
+            </Link>
+          </div>
+        </div>
+      </div>
+    </>
+  ) : null;
+
+  return (
+    <div className="relative z-[60] shrink-0 md:hidden" ref={triggerRef}>
+      <button
+        type="button"
+        className="flex touch-manipulation items-center gap-1 rounded-md border border-[var(--landing-border)] px-2 py-1.5 font-mono text-[10px] text-[var(--landing-muted)] hover:text-[var(--nav-icon)] active:bg-[var(--header-nav-hover)]"
         aria-expanded={open}
         aria-controls={panelId}
+        aria-haspopup="true"
         onClick={() => setOpen((o) => !o)}
       >
         {t("nav.menu")}
         <ChevronDown className={`transition-transform ${open ? "rotate-180" : ""}`} />
       </button>
-      {open ? (
-        <div
-          id={panelId}
-          className="absolute end-0 top-[calc(100%+6px)] z-[70] w-[min(100vw-1rem,320px)] rounded-lg border border-[var(--landing-border)] bg-[var(--landing-card)] p-3 shadow-2xl"
-          role="menu"
-        >
-          <div className="space-y-3 font-sans text-sm text-[var(--landing-text)]">
-            <div>
-              <p className="mb-1 font-mono text-[9px] uppercase tracking-wider text-[var(--landing-muted)]">
-                {t("nav.mobileTrade")}
-              </p>
-              <Link href="/trade" className="block rounded-md px-2 py-2 hover:bg-[var(--landing-row-hover)]" onClick={close}>
-                {t("nav.spot")}
-              </Link>
-              <span className="block cursor-default rounded-md px-2 py-2 text-[var(--landing-muted)]">
-                {t("nav.mobileFutures")}
-              </span>
-            </div>
-            <div>
-              <p className="mb-1 font-mono text-[9px] uppercase tracking-wider text-[var(--landing-muted)]">
-                {t("nav.explore")}
-              </p>
-              <Link href="/buy" className="block rounded-md px-2 py-2 hover:bg-[var(--landing-row-hover)]" onClick={close}>
-                {t("nav.buyCrypto")}
-              </Link>
-              <Link href="/markets" className="block rounded-md px-2 py-2 hover:bg-[var(--landing-row-hover)]" onClick={close}>
-                {t("nav.markets")}
-              </Link>
-              <Link href="/convert" className="block rounded-md px-2 py-2 hover:bg-[var(--landing-row-hover)]" onClick={close}>
-                {t("nav.convert")}
-              </Link>
-              <Link href="/" className="block rounded-md px-2 py-2 hover:bg-[var(--landing-row-hover)]" onClick={close}>
-                {t("nav.home")}
-              </Link>
-            </div>
-          </div>
-        </div>
-      ) : null}
+      {mounted && panel ? createPortal(panel, document.body) : null}
     </div>
   );
 }

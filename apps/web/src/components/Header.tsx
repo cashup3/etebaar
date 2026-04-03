@@ -60,7 +60,7 @@ export function Header() {
 
   return (
     <header
-      className="sticky top-0 z-50 border-b border-[var(--landing-border)] bg-[var(--landing-bg)]/95 backdrop-blur-md"
+      className="sticky top-0 z-50 overflow-visible border-b border-[var(--landing-border)] bg-[var(--landing-bg)]/95 backdrop-blur-md"
       style={{ height: "var(--header-h)" }}
     >
       <div className="mx-auto flex h-full max-w-[1920px] items-center justify-between gap-2 px-2 sm:px-4">
