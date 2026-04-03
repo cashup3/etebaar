@@ -9,8 +9,8 @@ export const pagesContentEn = {
   announcements: {
     title: "Announcements",
     subtitle: "Product updates, maintenance windows, and release notes for Etebaar.",
-    p1: "We publish notices about new features, API changes, scheduled downtime, and security-related updates here. This site is a developer-oriented spot stack; treat announcements as informational until you run your own production cut.",
-    p2: "Subscribe options and email alerts are not wired in this demo. For a live deployment, connect this section to your notification provider and CMS.",
+    p1: "We publish notices about new features, API changes, scheduled downtime, and security-related updates for Etebaar—an online crypto exchange and market analyzer based in Tbilisi, Georgia.",
+    p2: "Subscribe options and email alerts may be added over time. Connect this section to your notification provider when ready.",
     p3: "Nothing on this page constitutes trading advice or a commitment to list any asset.",
   },
   blog: {
@@ -22,9 +22,9 @@ export const pagesContentEn = {
   legal: {
     title: "Legal overview",
     subtitle: "Where policies live and how to read them.",
-    p1: "Etebaar is an independent project for learning and integration testing. Before serving end users, replace every legal document with counsel-reviewed text for your jurisdiction.",
-    p2: "Use the links below for terms of use, privacy, and risk disclosure templates you can adapt. They are starting points only.",
-    p3: "No lawyer–client relationship is formed by reading these demo pages.",
+    p1: "Etebaar is an online cryptocurrency exchange and price-analysis platform, founded in Tbilisi, Georgia. The documents below are templates—replace them with counsel-reviewed text for each jurisdiction where you operate.",
+    p2: "Use the links below for terms of use, privacy, and risk disclosure drafts you can adapt. They are starting points only.",
+    p3: "No lawyer–client relationship is formed by reading these pages.",
     p4: "Browse: Terms of use (/legal/terms) · Privacy (/legal/privacy) · Risk disclosure (/legal/risk).",
   },
   legalTerms: {

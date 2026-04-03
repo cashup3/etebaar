@@ -2,8 +2,11 @@
 
 import Image from "next/image";
 import { STOCK, STOCK_ATTRIBUTION } from "@/components/landing/stockPhotos";
+import { useLocale } from "@/i18n/LocaleProvider";
 
 export function AuthPhotoPanel() {
+  const { t } = useLocale();
+
   return (
     <div className="relative hidden min-h-[520px] flex-1 lg:flex">
       <Image
@@ -16,10 +19,8 @@ export function AuthPhotoPanel() {
       />
       <div className="absolute inset-0 bg-gradient-to-t from-[var(--landing-bg)] via-black/40 to-transparent lg:bg-gradient-to-r lg:from-transparent lg:via-black/30 lg:to-[var(--landing-bg)]" />
       <div className="relative z-[1] mt-auto p-8">
-        <p className="text-lg font-semibold text-white">Etebaar</p>
-        <p className="mt-2 max-w-sm text-sm text-white/85">
-          Spot trading tools designed for clarity — ledger, matching, and a terminal you can run locally.
-        </p>
+        <p className="text-lg font-semibold text-white">{t("authPanel.title")}</p>
+        <p className="mt-2 max-w-sm text-sm text-white/85">{t("authPanel.sub")}</p>
         <p className="mt-4 text-[10px] text-white/50">{STOCK_ATTRIBUTION}</p>
       </div>
     </div>

@@ -1,4 +1,6 @@
-# Etebaar — custodial spot exchange (monorepo)
+# Etebaar — online crypto exchange & market analysis (monorepo)
+
+Etebaar is an online cryptocurrency exchange and price-analysis platform, founded in **Tbilisi, Georgia**.
 
 | Part | Role |
 |------|------|

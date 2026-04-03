@@ -5,8 +5,10 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useAuth } from "@/components/AuthProvider";
 import { AuthPhotoPanel } from "@/components/landing/AuthPhotoPanel";
+import { useLocale } from "@/i18n/LocaleProvider";
 
 export default function LoginPage() {
+  const { t } = useLocale();
   const { login } = useAuth();
   const router = useRouter();
   const [email, setEmail] = useState("");
@@ -46,11 +48,9 @@ export default function LoginPage() {
         <div className="flex flex-1 flex-col justify-center lg:px-12 lg:py-16">
           <div className="mx-auto w-full max-w-md border border-[var(--landing-border)] bg-[var(--landing-card)] p-8">
             <h1 className="font-mono text-lg font-semibold tracking-wide text-[var(--landing-text)]">
-              Sign in
+              {t("auth.loginTitle")}
             </h1>
-            <p className="mt-1 font-mono text-[11px] text-[var(--landing-muted)]">
-              Etebaar spot — use the account you registered here.
-            </p>
+            <p className="mt-1 font-mono text-[11px] text-[var(--landing-muted)]">{t("auth.loginSub")}</p>
             <form className="mt-6 space-y-4" onSubmit={onSubmit}>
               <label className="block">
                 <span className="font-mono text-[10px] uppercase text-[var(--landing-muted)]">

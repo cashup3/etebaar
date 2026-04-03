@@ -5,8 +5,10 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useAuth } from "@/components/AuthProvider";
 import { AuthPhotoPanel } from "@/components/landing/AuthPhotoPanel";
+import { useLocale } from "@/i18n/LocaleProvider";
 
 export default function SignupPage() {
+  const { t } = useLocale();
   const { login } = useAuth();
   const router = useRouter();
   const [email, setEmail] = useState("");
@@ -54,11 +56,9 @@ export default function SignupPage() {
         <div className="flex flex-1 flex-col justify-center lg:px-12 lg:py-16">
           <div className="mx-auto w-full max-w-md border border-[var(--landing-border)] bg-[var(--landing-card)] p-8">
             <h1 className="font-mono text-lg font-semibold tracking-wide text-[var(--landing-text)]">
-              Create account
+              {t("auth.signupTitle")}
             </h1>
-            <p className="mt-1 font-mono text-[11px] text-[var(--landing-muted)]">
-              Register for Etebaar spot trading (demo / dev stack).
-            </p>
+            <p className="mt-1 font-mono text-[11px] text-[var(--landing-muted)]">{t("auth.signupSub")}</p>
             <form className="mt-6 space-y-4" onSubmit={onSubmit}>
               <label className="block">
                 <span className="font-mono text-[10px] uppercase text-[var(--landing-muted)]">

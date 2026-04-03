@@ -22,8 +22,9 @@ const vazirmatn = Vazirmatn({
 });
 
 export const metadata: Metadata = {
-  title: "Etebaar — Spot",
-  description: "Spot trading terminal",
+  title: "Etebaar — Crypto exchange & market analysis",
+  description:
+    "Etebaar is an online cryptocurrency exchange and price analyzer, founded in Tbilisi, Georgia. Trade spot markets, track live prices, and convert across fiat and crypto.",
 };
 
 export default function RootLayout({
