@@ -19,7 +19,7 @@ function deepMerge<T extends Record<string, unknown>>(base: T, extra: Partial<T>
 const enTree = {
   common: { soon: "Soon", loading: "Loading…" },
   floatingHelp: {
-    telegram: "Telegram support — @etebaar_ex",
+    telegram: "Telegram support — @etebarex",
     telegramTitle: "Open Telegram chat",
   },
   header: {
@@ -338,7 +338,7 @@ const enTree = {
 const faTree = {
   common: { soon: "به‌زودی", loading: "در حال بارگذاری…" },
   floatingHelp: {
-    telegram: "پشتیبانی تلگرام — @etebaar_ex",
+    telegram: "پشتیبانی تلگرام — @etebarex",
     telegramTitle: "باز کردن چت تلگرام",
   },
   header: {

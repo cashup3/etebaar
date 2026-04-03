@@ -2,7 +2,7 @@
 
 import { useLocale } from "@/i18n/LocaleProvider";
 
-const TELEGRAM_HELP_URL = "https://t.me/etebaar_ex";
+const TELEGRAM_HELP_URL = "https://t.me/etebarex";
 
 function IconTelegram({ className }: { className?: string }) {
   return (
@@ -12,7 +12,7 @@ function IconTelegram({ className }: { className?: string }) {
   );
 }
 
-/** Fixed bottom-right FAB linking to Telegram support (t.me/etebaar_ex). */
+/** Fixed bottom-right FAB linking to Telegram support (t.me/etebarex). */
 export function FloatingTelegramHelp() {
   const { t } = useLocale();
 
