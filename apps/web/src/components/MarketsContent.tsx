@@ -6,12 +6,13 @@ import { CryptoIcon } from "@/components/CryptoIcon";
 import { MarketingBanner } from "@/components/landing/MarketingBanner";
 import { MarketPreviewDrawer, type PreviewTicker } from "@/components/MarketPreviewDrawer";
 import { useLocale } from "@/i18n/LocaleProvider";
+import { formatToman } from "@/lib/formatToman";
 import { pairBaseAsset } from "@/lib/marketSymbol";
 
 type Ticker = PreviewTicker;
 
 export function MarketsContent() {
-  const { t } = useLocale();
+  const { t, locale } = useLocale();
   const [rows, setRows] = useState<Ticker[]>([]);
   const [q, setQ] = useState("");
   const [err, setErr] = useState<string | null>(null);
@@ -64,14 +65,14 @@ export function MarketsContent() {
       {err && <p className="font-mono text-xs text-[var(--sell)]">{err}</p>}
 
       <div className="overflow-x-auto border border-[var(--border)] bg-[var(--panel)]">
-        <table className="w-full min-w-[720px] text-start font-mono text-[11px]">
+        <table className="w-full min-w-[800px] text-start font-mono text-[11px]">
           <thead className="border-b border-[var(--border)] text-[var(--muted-dim)]">
             <tr>
               <th className="px-3 py-2 font-medium">{t("markets.pair")}</th>
-              <th className="px-3 py-2 font-medium">{t("markets.last")}</th>
+              <th className="px-3 py-2 font-medium">{t("markets.priceIrt")}</th>
               <th className="px-3 py-2 font-medium">{t("markets.chg")}</th>
-              <th className="hidden px-3 py-2 font-medium lg:table-cell">{t("markets.high")}</th>
-              <th className="hidden px-3 py-2 font-medium lg:table-cell">{t("markets.low")}</th>
+              <th className="hidden px-3 py-2 font-medium lg:table-cell">{t("markets.highIrt")}</th>
+              <th className="hidden px-3 py-2 font-medium lg:table-cell">{t("markets.lowIrt")}</th>
               <th className="px-3 py-2 font-medium">{t("markets.vol")}</th>
               <th className="px-3 py-2 font-medium" />
             </tr>
@@ -106,13 +107,18 @@ export function MarketsContent() {
                       </div>
                     </div>
                   </td>
-                  <td className="px-3 py-2.5 tabular-nums text-[var(--text)]">{r.last}</td>
+                  <td className="px-3 py-2.5 text-[var(--text)]">
+                    <span className="block font-semibold tabular-nums">{formatToman(r.lastIrt ?? null, locale)}</span>
+                    <span className="mt-0.5 block text-[10px] tabular-nums text-[var(--muted-dim)]">
+                      {t("markets.usdtRef")} {r.last}
+                    </span>
+                  </td>
                   <td className={`px-3 py-2.5 tabular-nums ${col}`}>{r.changePct}%</td>
                   <td className="hidden px-3 py-2.5 tabular-nums text-[var(--muted)] lg:table-cell">
-                    {r.high}
+                    {formatToman(r.highIrt ?? null, locale)}
                   </td>
                   <td className="hidden px-3 py-2.5 tabular-nums text-[var(--muted)] lg:table-cell">
-                    {r.low}
+                    {formatToman(r.lowIrt ?? null, locale)}
                   </td>
                   <td className="px-3 py-2.5 tabular-nums text-[var(--muted)]">{r.volume}</td>
                   <td className="px-3 py-2.5 text-end">

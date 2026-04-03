@@ -7,6 +7,7 @@ import { TradeOnTheGoSection } from "@/components/landing/TradeOnTheGoSection";
 import { TrustReserveSection } from "@/components/landing/TrustReserveSection";
 import { CryptoIcon } from "@/components/CryptoIcon";
 import { useLocale } from "@/i18n/LocaleProvider";
+import { formatToman } from "@/lib/formatToman";
 import { pairBaseAsset } from "@/lib/marketSymbol";
 import { TOP_USDT_PAIRS } from "@/data/topUsdtPairs";
 
@@ -15,6 +16,7 @@ type Ticker = {
   last: string;
   changePct: string;
   volume: string;
+  lastIrt?: number | null;
 };
 
 /** Prefer these when building the “Popular” strip (first wins among available tickers). */
@@ -35,7 +37,7 @@ const TRUST_STRIP = [
 ] as const;
 
 export function HomeLanding() {
-  const { t } = useLocale();
+  const { t, locale } = useLocale();
   const [tickers, setTickers] = useState<Ticker[]>([]);
   const [mktLoad, setMktLoad] = useState<"loading" | "ok" | "error">("loading");
   const [tab, setTab] = useState<"popular" | "new">("popular");
@@ -209,7 +211,12 @@ export function HomeLanding() {
                           <p className="truncate text-xs text-[var(--landing-muted)]">{r.symbol}</p>
                         </div>
                         <div className="text-end">
-                          <p className="text-sm font-medium tabular-nums text-[var(--landing-text)]">{r.last}</p>
+                          <p className="text-sm font-medium tabular-nums text-[var(--landing-text)]">
+                            {formatToman(r.lastIrt ?? null, locale)}
+                          </p>
+                          <p className="text-[10px] tabular-nums text-[var(--landing-muted)]">
+                            {t("markets.usdtRef")} {r.last}
+                          </p>
                           <p className={`text-xs font-medium tabular-nums ${up ? "text-[var(--buy)]" : "text-[var(--sell)]"}`}>
                             {up ? "+" : ""}
                             {r.changePct}%

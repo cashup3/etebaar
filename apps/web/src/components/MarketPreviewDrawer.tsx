@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import { CryptoIcon } from "@/components/CryptoIcon";
 import { ChartPane } from "@/components/trade/ChartPane";
 import { useLocale } from "@/i18n/LocaleProvider";
+import { formatToman } from "@/lib/formatToman";
 import { pairBaseAsset } from "@/lib/marketSymbol";
 
 export type PreviewTicker = {
@@ -14,6 +15,9 @@ export type PreviewTicker = {
   volume: string;
   high: string;
   low: string;
+  lastIrt?: number | null;
+  highIrt?: number | null;
+  lowIrt?: number | null;
 };
 
 function fmt(n: string | undefined) {
@@ -30,7 +34,7 @@ export function MarketPreviewDrawer({
   row: PreviewTicker | null;
   onClose: () => void;
 }) {
-  const { t } = useLocale();
+  const { t, locale } = useLocale();
 
   useEffect(() => {
     if (!row) return;
@@ -84,7 +88,14 @@ export function MarketPreviewDrawer({
 
         <div className="grid gap-1 border-b border-[var(--border)] bg-[var(--panel)] px-4 py-3 font-mono">
           <div className="flex flex-wrap items-baseline justify-between gap-2">
-            <span className="text-2xl font-semibold tabular-nums text-[var(--text)]">{fmt(row.last)}</span>
+            <div>
+              <span className="text-2xl font-semibold tabular-nums text-[var(--text)]">
+                {formatToman(row.lastIrt ?? null, locale)}
+              </span>
+              <span className="mt-0.5 block text-[10px] text-[var(--muted-dim)]">
+                {t("markets.usdtRef")} {fmt(row.last)}
+              </span>
+            </div>
             <span className={`text-sm font-medium tabular-nums ${chCls}`}>
               {up ? "+" : ""}
               {row.changePct}%
@@ -92,10 +103,14 @@ export function MarketPreviewDrawer({
           </div>
           <div className="flex flex-wrap gap-x-4 gap-y-1 text-[10px] text-[var(--muted)]">
             <span>
-              <span className="text-[var(--muted-dim)]">{t("markets.high")}</span> {fmt(row.high)}
+              <span className="text-[var(--muted-dim)]">{t("markets.high")}</span>{" "}
+              {formatToman(row.highIrt ?? null, locale)}
+              <span className="text-[var(--muted-dim)]"> ({fmt(row.high)})</span>
             </span>
             <span>
-              <span className="text-[var(--muted-dim)]">{t("markets.low")}</span> {fmt(row.low)}
+              <span className="text-[var(--muted-dim)]">{t("markets.low")}</span>{" "}
+              {formatToman(row.lowIrt ?? null, locale)}
+              <span className="text-[var(--muted-dim)]"> ({fmt(row.low)})</span>
             </span>
             <span>
               <span className="text-[var(--muted-dim)]">{t("markets.vol")}</span> {fmt(row.volume)}

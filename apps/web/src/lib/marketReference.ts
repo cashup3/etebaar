@@ -58,7 +58,11 @@ async function pickBinanceBase(bases: string[]): Promise<string | null> {
   return null;
 }
 
-async function listTradingSymbolsForQuote(base: string, quote: string): Promise<string[]> {
+async function listTradingSymbolsForQuote(
+  base: string,
+  quote: string,
+): Promise<{ symbols: string[]; fromExchange: boolean }> {
+  const fallback = FALLBACK_QUOTE_SYMBOLS[quote] ?? [];
   try {
     const res = await fetch(`${base}/api/v3/exchangeInfo`, {
       next: { revalidate: 3600 },
@@ -73,9 +77,9 @@ async function listTradingSymbolsForQuote(base: string, quote: string): Promise<
       .filter((s) => s.status === "TRADING" && s.quoteAsset === quote)
       .map((s) => s.symbol);
     if (!list.length) throw new Error("empty");
-    return list;
+    return { symbols: list, fromExchange: true };
   } catch {
-    return FALLBACK_QUOTE_SYMBOLS[quote] ?? [];
+    return { symbols: fallback, fromExchange: false };
   }
 }
 
@@ -88,8 +92,11 @@ type Binance24hr = {
   lowPrice: string;
 };
 
-async function fetch24hrBatchAt(base: string, symbols: string[]): Promise<Binance24hr[]> {
-  if (!symbols.length) return [];
+async function fetch24hrBatchAt(
+  base: string,
+  symbols: string[],
+): Promise<{ rows: Binance24hr[]; httpStatus: number }> {
+  if (!symbols.length) return { rows: [], httpStatus: 200 };
   const qs = encodeURIComponent(JSON.stringify(symbols));
   const url = `${base}/api/v3/ticker/24hr?symbols=${qs}`;
   const res = await fetch(url, {
@@ -97,13 +104,30 @@ async function fetch24hrBatchAt(base: string, symbols: string[]): Promise<Binanc
     headers: { Accept: "application/json" },
     signal: AbortSignal.timeout(10_000),
   });
-  if (!res.ok) return [];
+  if (!res.ok) return { rows: [], httpStatus: res.status };
   const json = (await res.json()) as Binance24hr | Binance24hr[];
-  return Array.isArray(json) ? json : [json];
+  const rows = Array.isArray(json) ? json : [json];
+  return { rows, httpStatus: res.status };
+}
+
+/**
+ * Binance rejects the whole batch if any symbol is invalid. Split on 400 so majors
+ * (BTC/ETH/…) are not dropped when one alt in the chunk is wrong or delisted.
+ */
+async function fetch24hrBatchSafe(base: string, symbols: string[]): Promise<Binance24hr[]> {
+  if (!symbols.length) return [];
+  const { rows, httpStatus } = await fetch24hrBatchAt(base, symbols);
+  if (rows.length > 0) return rows;
+  if (symbols.length === 1) return [];
+  if (httpStatus !== 400) return [];
+  const mid = Math.floor(symbols.length / 2);
+  const left = await fetch24hrBatchSafe(base, symbols.slice(0, mid));
+  const right = await fetch24hrBatchSafe(base, symbols.slice(mid));
+  return [...left, ...right];
 }
 
 function mapBinanceRows(merged: Binance24hr[], q: string) {
-  return merged
+  const rows = merged
     .filter((x) => x.symbol.endsWith(q))
     .map((x) => ({
       symbol: x.symbol,
@@ -112,9 +136,18 @@ function mapBinanceRows(merged: Binance24hr[], q: string) {
       volume: x.quoteVolume,
       high: x.highPrice,
       low: x.lowPrice,
-    }))
-    .sort((a, b) => Number.parseFloat(b.volume) - Number.parseFloat(a.volume))
-    .slice(0, 400);
+    }));
+  const bySym = new Map(rows.map((r) => [r.symbol, r]));
+  const pinned: typeof rows = [];
+  for (const s of TOP_USDT_PAIRS) {
+    const r = bySym.get(s);
+    if (r) pinned.push(r);
+  }
+  const pinSet = new Set(pinned.map((r) => r.symbol));
+  const rest = rows
+    .filter((r) => !pinSet.has(r.symbol))
+    .sort((a, b) => Number.parseFloat(b.volume) - Number.parseFloat(a.volume));
+  return [...pinned, ...rest].slice(0, 400);
 }
 
 /** USD spot prices mapped to synthetic *USDT rows (reference only; not order-book prices). */
@@ -246,12 +279,23 @@ export async function fetchTickersByQuote(quote: string) {
   const base = await pickBinanceBase(bases);
 
   if (base) {
-    const fromInfo = await listTradingSymbolsForQuote(base, q);
-    const fallback = FALLBACK_QUOTE_SYMBOLS[q] ?? [];
-    const symbols = [...new Set([...fallback, ...fromInfo])].slice(0, 400);
+    const { symbols: listed, fromExchange } = await listTradingSymbolsForQuote(base, q);
+    const valid = new Set(listed);
+    let symbols: string[];
+    if (fromExchange) {
+      const topOrdered = TOP_USDT_PAIRS.filter((s) => valid.has(s));
+      const topSet = new Set(topOrdered);
+      symbols = [...topOrdered, ...listed.filter((s) => !topSet.has(s))].slice(0, 400);
+    } else {
+      symbols = [...new Set(listed)].slice(0, 400);
+    }
     if (symbols.length) {
       const batches = chunk(symbols, 100);
-      const batchResults = await Promise.all(batches.map((b) => fetch24hrBatchAt(base, b)));
+      const batchResults = await Promise.all(
+        batches.map((b) =>
+          fromExchange ? fetch24hrBatchAt(base, b).then((x) => x.rows) : fetch24hrBatchSafe(base, b),
+        ),
+      );
       const merged = batchResults.flat();
       if (merged.length) {
         return { ok: true as const, body: { quote: q, tickers: mapBinanceRows(merged, q) } };
