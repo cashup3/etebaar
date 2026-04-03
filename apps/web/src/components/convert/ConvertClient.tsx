@@ -315,7 +315,9 @@ export function ConvertClient() {
               ? t("convertPage.srcNobitex")
               : data?.sources.irt === "iran-json"
                 ? t("convertPage.srcIranJson")
-                : t("convertPage.srcFallback")}
+                : data?.sources.irt === "wallex"
+                  ? t("convertPage.srcWallex")
+                  : t("convertPage.srcFallback")}
           </li>
           <li>
             {t("convertPage.srcFiat")}: {data?.sources.fx === "frankfurter-ecb" ? "Frankfurter / ECB" : "—"}

@@ -8,10 +8,16 @@ const fetchOpts = { next: { revalidate: 30 } as const };
 
 const BINANCE = "https://api.binance.com";
 const FRANKFURTER = "https://api.frankfurter.app/latest";
-const NOBITEX = "https://api.nobitex.ir/v2/orderbook/USDTIRT";
+const NOBITEX_ORDERBOOK_URLS = [
+  "https://api.nobitex.ir/v2/orderbook/USDTIRT",
+  "https://api.nobitex.net/v2/orderbook/USDTIRT",
+] as const;
 
-/** ~toman per 1 USDT when Nobitex is unreachable (override with FALLBACK_TOMAN_PER_USDT). */
-const DEFAULT_TOMAN_FALLBACK = 52000;
+/** Wallex quotes USDT/TMN in toman per 1 USDT (works from many datacenters when Nobitex .ir is blocked). */
+const WALLEX_USDT_DEPTH = "https://api.wallex.ir/v1/depth?symbol=USDTTMN";
+
+/** ~toman per 1 USDT when no live feed works (override with FALLBACK_TOMAN_PER_USDT on Vercel). */
+const DEFAULT_TOMAN_FALLBACK = 105000;
 
 const CRYPTO_PAIRS = [
   "BTCUSDT",
@@ -43,24 +49,61 @@ function num(s: string | undefined): number | null {
   return Number.isFinite(x) ? x : null;
 }
 
-async function fetchTomanPerUsdt(): Promise<{ tomanPerUsdt: number; note: string } | null> {
+function parseNobitexOrderbookToman(j: Record<string, unknown>): number | null {
+  const bids = j.bids as [string, string][] | undefined;
+  const asks = j.asks as [string, string][] | undefined;
+  const b = num(bids?.[0]?.[0]);
+  const a = num(asks?.[0]?.[0]);
+  if (b !== null && a !== null && b > 0 && a > 0) {
+    const midRial = (b + a) / 2;
+    const tomanPerUsdt = midRial / 10;
+    if (Number.isFinite(tomanPerUsdt) && tomanPerUsdt > 5000) return tomanPerUsdt;
+  }
+  const last = num(String(j.lastTradePrice ?? j.lastTrade ?? ""));
+  if (last !== null && last > 20_000) {
+    const tomanPerUsdt = last / 10;
+    if (Number.isFinite(tomanPerUsdt) && tomanPerUsdt > 5000) return tomanPerUsdt;
+  }
+  return null;
+}
+
+async function fetchTomanPerUsdtNobitex(): Promise<number | null> {
+  for (const url of NOBITEX_ORDERBOOK_URLS) {
+    try {
+      const res = await fetch(url, {
+        ...fetchOpts,
+        headers: { Accept: "application/json", "User-Agent": "EtebaarConvert/1.0" },
+        signal: AbortSignal.timeout(12_000),
+      });
+      if (!res.ok) continue;
+      const j = (await res.json()) as Record<string, unknown>;
+      const t = parseNobitexOrderbookToman(j);
+      if (t !== null) return t;
+    } catch {
+      /* try next host */
+    }
+  }
+  return null;
+}
+
+/** TMN = toman on Wallex; mid of best bid/ask. */
+async function fetchTomanPerUsdtWallex(): Promise<number | null> {
   try {
-    const res = await fetch(NOBITEX, fetchOpts);
+    const res = await fetch(WALLEX_USDT_DEPTH, {
+      ...fetchOpts,
+      headers: { Accept: "application/json", "User-Agent": "EtebaarConvert/1.0" },
+      signal: AbortSignal.timeout(12_000),
+    });
     if (!res.ok) return null;
     const j = (await res.json()) as {
-      bids?: [string, string][];
-      asks?: [string, string][];
+      result?: { bid?: { price: number }[]; ask?: { price: number }[] };
     };
-    const bid = j.bids?.[0]?.[0];
-    const ask = j.asks?.[0]?.[0];
-    const b = num(bid);
-    const a = num(ask);
-    if (b === null || a === null) return null;
-    const midRial = (b + a) / 2;
-    // Nobitex USDTIRT is quoted in Iranian rials per 1 USDT; 1 toman = 10 rials.
-    const tomanPerUsdt = midRial / 10;
-    if (!Number.isFinite(tomanPerUsdt) || tomanPerUsdt < 1000) return null;
-    return { tomanPerUsdt, note: "nobitex-usdtirt-mid-rial-to-toman" };
+    const bid = j.result?.bid?.[0]?.price;
+    const ask = j.result?.ask?.[0]?.price;
+    if (typeof bid !== "number" || typeof ask !== "number") return null;
+    const mid = (bid + ask) / 2;
+    if (!Number.isFinite(mid) || mid < 10_000) return null;
+    return mid;
   } catch {
     return null;
   }
@@ -115,8 +158,9 @@ export async function GET() {
   const iranDisplayOnly =
     process.env.IRAN_RATES_DISPLAY_ONLY === "1" || process.env.IRAN_RATES_DISPLAY_ONLY?.toLowerCase() === "true";
 
-  const [nobitex, iranJson, fx, crypto] = await Promise.all([
-    fetchTomanPerUsdt(),
+  const [nobitexToman, wallexToman, iranJson, fx, crypto] = await Promise.all([
+    fetchTomanPerUsdtNobitex(),
+    fetchTomanPerUsdtWallex(),
     fetchIranRatesFromEnv(),
     fetchFrankfurterUsdTargets(),
     fetchBinanceUsdPerCrypto(),
@@ -125,9 +169,11 @@ export async function GET() {
   const irtFromIran = iranJson && !iranDisplayOnly;
   const irtMeta = irtFromIran
     ? { source: "iran-json" as const, tomanPerUsdt: iranJson.tomanPerUsdt }
-    : nobitex
-      ? { source: "nobitex" as const, tomanPerUsdt: nobitex.tomanPerUsdt }
-      : { source: "fallback" as const, tomanPerUsdt: fallbackToman };
+    : nobitexToman !== null
+      ? { source: "nobitex" as const, tomanPerUsdt: nobitexToman }
+      : wallexToman !== null
+        ? { source: "wallex" as const, tomanPerUsdt: wallexToman }
+        : { source: "fallback" as const, tomanPerUsdt: fallbackToman };
 
   const iranOpenMarket = iranJson
     ? {
@@ -171,6 +217,6 @@ export async function GET() {
     },
     iranOpenMarket: iranOpenMarket ?? undefined,
     note:
-      "Reference rates only. IRT uses IRAN_RATES_JSON_URL when configured (see .env.example), else Nobitex USDT/IRT (rial→toman ÷10) or a fallback; fiat crosses via Frankfurter (ECB); crypto via Binance USDT last. Not for settlement or tax.",
+      "Reference rates only. IRT uses IRAN_RATES_JSON_URL when set, else Nobitex USDT/IRT (or Wallex USDT/TMN if Nobitex is unreachable), else FALLBACK_TOMAN_PER_USDT. Fiat via Frankfurter; crypto via Binance USDT. Not for settlement or tax.",
   });
 }
