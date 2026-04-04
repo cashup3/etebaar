@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { HomeCurrencyCalculator } from "@/components/landing/HomeCurrencyCalculator";
 import { LifestyleVideoRow } from "@/components/landing/LifestyleVideoRow";
 import { TradeOnTheGoSection } from "@/components/landing/TradeOnTheGoSection";
@@ -51,29 +51,36 @@ export function HomeLanding() {
   const [tickersLoad, setTickersLoad] = useState<"loading" | "ok" | "error">("loading");
   const [convertLoad, setConvertLoad] = useState<"loading" | "ok" | "error">("loading");
   const [tab, setTab] = useState<"popular" | "fiat">("fiat");
+  const [ratesUpdatedAt, setRatesUpdatedAt] = useState<string | null>(null);
+  const [ratesRefreshing, setRatesRefreshing] = useState(false);
 
   const currencyNames = useMemo(
     () => new Intl.DisplayNames(locale === "fa" ? "fa-IR" : "en-US", { type: "currency" }),
     [locale],
   );
 
-  useEffect(() => {
-    let cancelled = false;
-    void (async () => {
+  const loadHomeMarketData = useCallback(async (refreshToman: boolean) => {
+    if (refreshToman) {
+      setRatesRefreshing(true);
+    } else {
       setTickersLoad("loading");
       setConvertLoad("loading");
+    }
+    const tickUrl = "/api/market/tickers?quote=USDT&refresh=1";
+    const convUrl = "/api/convert/rates?refresh=1";
+    const init = { cache: "no-store" } as RequestInit;
+
+    try {
       const settled = await Promise.allSettled([
-        fetch("/api/market/tickers?quote=USDT").then(async (r) => {
+        fetch(tickUrl, init).then(async (r) => {
           if (!r.ok) throw new Error(String(r.status));
           return (await r.json()) as { tickers: Ticker[] };
         }),
-        fetch("/api/convert/rates").then(async (r) => {
+        fetch(convUrl, init).then(async (r) => {
           if (!r.ok) throw new Error(String(r.status));
-          return (await r.json()) as { usdPerUnit?: Record<string, number> };
+          return (await r.json()) as { usdPerUnit?: Record<string, number>; updatedAt?: string };
         }),
       ]);
-
-      if (cancelled) return;
 
       if (settled[0].status === "fulfilled") {
         setTickers(settled[0].value.tickers ?? []);
@@ -87,6 +94,9 @@ export function HomeLanding() {
         const cj = settled[1].value;
         const map = cj.usdPerUnit ?? null;
         setUsdPerUnit(map);
+        if (typeof cj.updatedAt === "string") {
+          setRatesUpdatedAt(cj.updatedAt);
+        }
         const irtUsd = map?.IRT;
         if (typeof irtUsd === "number" && irtUsd > 0 && Number.isFinite(irtUsd)) {
           setTomanPerUsdt(Math.round(1 / irtUsd));
@@ -99,11 +109,16 @@ export function HomeLanding() {
         setTomanPerUsdt(null);
         setConvertLoad("error");
       }
-    })();
-    return () => {
-      cancelled = true;
-    };
+    } finally {
+      if (refreshToman) {
+        setRatesRefreshing(false);
+      }
+    }
   }, []);
+
+  useEffect(() => {
+    void loadHomeMarketData(false);
+  }, [loadHomeMarketData]);
 
   const popularRows = useMemo(() => {
     const map = new Map(tickers.map((t) => [t.symbol, t]));
@@ -201,7 +216,13 @@ export function HomeLanding() {
               </Link>
             </div>
 
-            <HomeCurrencyCalculator usdPerUnit={usdPerUnit} convertLoad={convertLoad} />
+            <HomeCurrencyCalculator
+              usdPerUnit={usdPerUnit}
+              convertLoad={convertLoad}
+              ratesUpdatedAt={ratesUpdatedAt}
+              ratesRefreshing={ratesRefreshing}
+              onRefreshRates={() => void loadHomeMarketData(true)}
+            />
 
             <div className="flex items-center gap-4 pt-2">
               <span className="text-xs text-[var(--landing-muted)]">{t("home.getApp")}</span>

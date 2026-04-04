@@ -24,32 +24,52 @@ export function MarketsContent() {
   const [convertErr, setConvertErr] = useState<string | null>(null);
   const [cryptoPreview, setCryptoPreview] = useState<Ticker | null>(null);
   const [fiatPreview, setFiatPreview] = useState<FiatPreviewRow | null>(null);
+  const [ratesRefreshing, setRatesRefreshing] = useState(false);
 
-  useEffect(() => {
-    void fetch("/api/market/tickers?quote=USDT")
-      .then((r) => {
-        if (!r.ok) throw new Error(String(r.status));
-        return r.json();
-      })
-      .then((j: { tickers: Ticker[] }) => setRows(j.tickers ?? []))
-      .catch(() => setErr(t("markets.err")));
-  }, [t]);
+  const loadMarketsData = useCallback(
+    async (refreshToman: boolean) => {
+      if (refreshToman) {
+        setRatesRefreshing(true);
+      }
+      const init = { cache: "no-store" } as RequestInit;
+      const tickUrl = "/api/market/tickers?quote=USDT&refresh=1";
+      const convUrl = "/api/convert/rates?refresh=1";
 
-  useEffect(() => {
-    void fetch("/api/convert/rates")
-      .then((r) => {
-        if (!r.ok) throw new Error(String(r.status));
-        return r.json();
-      })
-      .then((j: { usdPerUnit?: Record<string, number> }) => {
-        setUsdPerUnit(j.usdPerUnit ?? null);
-        setConvertErr(null);
-      })
-      .catch(() => {
+      try {
+        const [tickRes, convRes] = await Promise.all([fetch(tickUrl, init), fetch(convUrl, init)]);
+
+        if (tickRes.ok) {
+          const j = (await tickRes.json()) as { tickers: Ticker[] };
+          setRows(j.tickers ?? []);
+          setErr(null);
+        } else {
+          setErr(t("markets.err"));
+        }
+
+        if (convRes.ok) {
+          const j = (await convRes.json()) as { usdPerUnit?: Record<string, number> };
+          setUsdPerUnit(j.usdPerUnit ?? null);
+          setConvertErr(null);
+        } else {
+          setUsdPerUnit(null);
+          setConvertErr(t("convertPage.errLoad"));
+        }
+      } catch {
+        setErr(t("markets.err"));
         setUsdPerUnit(null);
         setConvertErr(t("convertPage.errLoad"));
-      });
-  }, [t]);
+      } finally {
+        if (refreshToman) {
+          setRatesRefreshing(false);
+        }
+      }
+    },
+    [t],
+  );
+
+  useEffect(() => {
+    void loadMarketsData(false);
+  }, [loadMarketsData]);
 
   const fiatRows = useMemo(() => {
     if (!usdPerUnit) return [];
@@ -118,25 +138,35 @@ export function MarketsContent() {
           </p>
         </div>
         <div className="flex w-full flex-col gap-3 sm:w-auto sm:items-end">
-          <div className="flex gap-1 border border-[var(--border)] bg-[var(--panel)] p-1 font-mono text-[11px]">
+          <div className="flex flex-wrap items-center justify-end gap-2">
             <button
               type="button"
-              onClick={() => setTab("fiat")}
-              className={`rounded px-3 py-1.5 font-medium transition-colors ${
-                tab === "fiat" ? "bg-[var(--accent-dim)] text-[var(--accent)]" : "text-[var(--muted)] hover:text-[var(--text)]"
-              }`}
+              disabled={ratesRefreshing}
+              onClick={() => void loadMarketsData(true)}
+              className="touch-manipulation rounded border border-[var(--border)] bg-[var(--panel)] px-3 py-1.5 font-mono text-[11px] font-medium text-[var(--accent)] transition-colors hover:border-[var(--border-strong)] disabled:opacity-50"
             >
-              {t("markets.tabCurrencies")}
+              {ratesRefreshing ? t("convertPage.refreshing") : t("markets.refreshToman")}
             </button>
-            <button
-              type="button"
-              onClick={() => setTab("crypto")}
-              className={`rounded px-3 py-1.5 font-medium transition-colors ${
-                tab === "crypto" ? "bg-[var(--accent-dim)] text-[var(--accent)]" : "text-[var(--muted)] hover:text-[var(--text)]"
-              }`}
-            >
-              {t("markets.tabCrypto")}
-            </button>
+            <div className="flex gap-1 border border-[var(--border)] bg-[var(--panel)] p-1 font-mono text-[11px]">
+              <button
+                type="button"
+                onClick={() => setTab("fiat")}
+                className={`rounded px-3 py-1.5 font-medium transition-colors ${
+                  tab === "fiat" ? "bg-[var(--accent-dim)] text-[var(--accent)]" : "text-[var(--muted)] hover:text-[var(--text)]"
+                }`}
+              >
+                {t("markets.tabCurrencies")}
+              </button>
+              <button
+                type="button"
+                onClick={() => setTab("crypto")}
+                className={`rounded px-3 py-1.5 font-medium transition-colors ${
+                  tab === "crypto" ? "bg-[var(--accent-dim)] text-[var(--accent)]" : "text-[var(--muted)] hover:text-[var(--text)]"
+                }`}
+              >
+                {t("markets.tabCrypto")}
+              </button>
+            </div>
           </div>
           <input
             placeholder={t("markets.searchPh")}

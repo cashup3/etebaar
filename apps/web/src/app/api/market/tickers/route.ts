@@ -1,3 +1,4 @@
+import { unstable_noStore as noStore } from "next/cache";
 import { NextResponse } from "next/server";
 import { fetchTickersByQuote } from "@/lib/marketReference";
 import { getIranAndTomanMeta, irtFromUsdtPrice } from "@/lib/tomanPerUsdtRef";
@@ -21,10 +22,14 @@ type TickerRow = {
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const quote = (searchParams.get("quote") ?? "USDT").toUpperCase();
+  const live = searchParams.get("refresh") === "1";
+  if (live) {
+    noStore();
+  }
 
   const [marketResult, { irtMeta }] = await Promise.all([
     fetchTickersByQuote(quote),
-    getIranAndTomanMeta(),
+    getIranAndTomanMeta({ live }),
   ]);
 
   if (!marketResult.ok) {

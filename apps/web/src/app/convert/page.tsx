@@ -1,5 +1,11 @@
 import type { Metadata } from "next";
+import { Cormorant_Garamond } from "next/font/google";
 import { ConvertClient } from "@/components/convert/ConvertClient";
+
+const convertDisplay = Cormorant_Garamond({
+  subsets: ["latin"],
+  weight: ["500", "600", "700"],
+});
 
 export const metadata: Metadata = {
   title: "Convert · Etebaar",
@@ -7,5 +13,5 @@ export const metadata: Metadata = {
 };
 
 export default function ConvertPage() {
-  return <ConvertClient />;
+  return <ConvertClient displayFontClass={convertDisplay.className} />;
 }

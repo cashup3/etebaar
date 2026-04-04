@@ -36,6 +36,9 @@ export type HomeCurrencyCalculatorProps = {
   /** Same `usdPerUnit` map as /api/convert/rates — single source of truth for dropdowns and math. */
   usdPerUnit: Record<string, number> | null;
   convertLoad: "loading" | "ok" | "error";
+  ratesUpdatedAt?: string | null;
+  ratesRefreshing?: boolean;
+  onRefreshRates?: () => void;
 };
 
 function codesFromUsdPerUnit(map: Record<string, number> | null): string[] {
@@ -48,7 +51,13 @@ function codesFromUsdPerUnit(map: Record<string, number> | null): string[] {
   return out;
 }
 
-export function HomeCurrencyCalculator({ usdPerUnit, convertLoad }: HomeCurrencyCalculatorProps) {
+export function HomeCurrencyCalculator({
+  usdPerUnit,
+  convertLoad,
+  ratesUpdatedAt,
+  ratesRefreshing,
+  onRefreshRates,
+}: HomeCurrencyCalculatorProps) {
   const { t, locale } = useLocale();
   const [from, setFrom] = useState("USD");
   const [to, setTo] = useState("IRT");
@@ -147,18 +156,36 @@ export function HomeCurrencyCalculator({ usdPerUnit, convertLoad }: HomeCurrency
         />
         <div className="relative px-5 pb-5 pt-4 sm:px-6 sm:pb-6 sm:pt-5">
           <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
-            <div>
+            <div className="min-w-0">
               <h2 className="text-lg font-bold tracking-tight text-[var(--landing-text)]">{t("home.calcTitle")}</h2>
               <p className="mt-1 max-w-[42ch] text-xs leading-relaxed text-[var(--landing-muted)]">
                 {t("home.calcSub")}
               </p>
+              {ratesUpdatedAt ? (
+                <p className="mt-1.5 text-[10px] text-[var(--landing-muted)]">
+                  {t("convertPage.updated")}{" "}
+                  {new Date(ratesUpdatedAt).toLocaleString(locale === "fa" ? "fa-IR" : "en-US")}
+                </p>
+              ) : null}
             </div>
-            <Link
-              href="/convert"
-              className="shrink-0 rounded-full border border-[var(--landing-border)] bg-[var(--landing-elevated)] px-3 py-1.5 text-xs font-semibold text-[var(--gold)] transition-colors hover:border-[var(--gold)] hover:bg-[var(--landing-row-hover)]"
-            >
-              {t("home.calcFull")}
-            </Link>
+            <div className="flex shrink-0 flex-wrap items-center gap-2">
+              {onRefreshRates ? (
+                <button
+                  type="button"
+                  disabled={ratesRefreshing}
+                  onClick={onRefreshRates}
+                  className="touch-manipulation rounded-full border border-[var(--landing-border)] bg-[var(--landing-elevated)] px-3 py-1.5 text-xs font-semibold text-[var(--landing-text)] transition-colors hover:border-[var(--gold)] disabled:opacity-50"
+                >
+                  {ratesRefreshing ? t("home.refreshing") : t("home.refreshToman")}
+                </button>
+              ) : null}
+              <Link
+                href="/convert"
+                className="inline-flex rounded-full border border-[var(--landing-border)] bg-[var(--landing-elevated)] px-3 py-1.5 text-xs font-semibold text-[var(--gold)] transition-colors hover:border-[var(--gold)] hover:bg-[var(--landing-row-hover)]"
+              >
+                {t("home.calcFull")}
+              </Link>
+            </div>
           </div>
 
           {convertLoad === "loading" && (

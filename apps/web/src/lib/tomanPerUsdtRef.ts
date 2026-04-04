@@ -1,6 +1,11 @@
+import { fetchBonbastArchiveRates } from "@/lib/bonbastArchiveRates";
 import { fetchIranRatesFromEnv, type NormalizedIranRates } from "@/lib/iranRatesJson";
 
-const fetchOpts = { next: { revalidate: 30 } as const };
+/** Default Next.js Data Cache for Nobitex / Wallex (aligned with /api/convert/rates). */
+export const rateFetchCached: RequestInit = { next: { revalidate: 30 } };
+
+/** Bypass Data Cache — use for `?refresh=1` live toman pulls. */
+export const rateFetchLive: RequestInit = { cache: "no-store" };
 
 const NOBITEX_ORDERBOOK_URLS = [
   "https://api.nobitex.ir/v2/orderbook/USDTIRT",
@@ -35,11 +40,11 @@ function parseNobitexOrderbookToman(j: Record<string, unknown>): number | null {
   return null;
 }
 
-export async function fetchTomanPerUsdtNobitex(): Promise<number | null> {
+export async function fetchTomanPerUsdtNobitex(fetchInit: RequestInit = rateFetchCached): Promise<number | null> {
   for (const url of NOBITEX_ORDERBOOK_URLS) {
     try {
       const res = await fetch(url, {
-        ...fetchOpts,
+        ...fetchInit,
         headers: { Accept: "application/json", "User-Agent": "EtebaarConvert/1.0" },
         signal: AbortSignal.timeout(12_000),
       });
@@ -54,10 +59,10 @@ export async function fetchTomanPerUsdtNobitex(): Promise<number | null> {
   return null;
 }
 
-export async function fetchTomanPerUsdtWallex(): Promise<number | null> {
+export async function fetchTomanPerUsdtWallex(fetchInit: RequestInit = rateFetchCached): Promise<number | null> {
   try {
     const res = await fetch(WALLEX_USDT_DEPTH, {
-      ...fetchOpts,
+      ...fetchInit,
       headers: { Accept: "application/json", "User-Agent": "EtebaarConvert/1.0" },
       signal: AbortSignal.timeout(12_000),
     });
@@ -76,18 +81,19 @@ export async function fetchTomanPerUsdtWallex(): Promise<number | null> {
   }
 }
 
-export type TomanPerUsdtSource = "iran-json" | "nobitex" | "wallex" | "fallback";
+export type TomanPerUsdtSource = "iran-json" | "nobitex" | "wallex" | "bonbast-archive" | "fallback";
 
 export function mergeTomanPerUsdtMeta(
-  iranJson: NormalizedIranRates | null,
+  iranJsonEnv: NormalizedIranRates | null,
   iranDisplayOnly: boolean,
   nobitexToman: number | null,
   wallexToman: number | null,
+  bonbastArchiveToman: number | null,
   fallbackToman: number,
 ): { source: TomanPerUsdtSource; tomanPerUsdt: number } {
-  const irtFromIran = iranJson && !iranDisplayOnly;
+  const irtFromIran = iranJsonEnv && !iranDisplayOnly;
   if (irtFromIran) {
-    return { source: "iran-json", tomanPerUsdt: iranJson.tomanPerUsdt };
+    return { source: "iran-json", tomanPerUsdt: iranJsonEnv.tomanPerUsdt };
   }
   if (nobitexToman !== null) {
     return { source: "nobitex", tomanPerUsdt: nobitexToman };
@@ -95,33 +101,45 @@ export function mergeTomanPerUsdtMeta(
   if (wallexToman !== null) {
     return { source: "wallex", tomanPerUsdt: wallexToman };
   }
+  if (bonbastArchiveToman !== null) {
+    return { source: "bonbast-archive", tomanPerUsdt: bonbastArchiveToman };
+  }
   return { source: "fallback", tomanPerUsdt: fallbackToman };
 }
 
-/** Same IRT/USDT reference as /api/convert/rates (Nobitex → Wallex → env fallback; optional IRAN_RATES_JSON_URL). */
-export async function getIranAndTomanMeta(): Promise<{
+/** Same IRT/USDT reference as /api/convert/rates (optional IRAN_RATES_JSON_URL anchor → Nobitex → Wallex → Bonbast archive → FALLBACK). */
+export async function getIranAndTomanMeta(opts?: { live?: boolean }): Promise<{
   irtMeta: { source: TomanPerUsdtSource; tomanPerUsdt: number };
   iranJson: NormalizedIranRates | null;
 }> {
+  const fetchInit = opts?.live ? rateFetchLive : rateFetchCached;
+  const iranFetchInit = opts?.live ? rateFetchLive : undefined;
+
   const fallbackToman =
     Number.parseFloat(process.env.FALLBACK_TOMAN_PER_USDT ?? "") || DEFAULT_TOMAN_FALLBACK;
   const iranDisplayOnly =
     process.env.IRAN_RATES_DISPLAY_ONLY === "1" ||
     process.env.IRAN_RATES_DISPLAY_ONLY?.toLowerCase() === "true";
 
-  const [nobitexToman, wallexToman, iranJson] = await Promise.all([
-    fetchTomanPerUsdtNobitex(),
-    fetchTomanPerUsdtWallex(),
-    fetchIranRatesFromEnv(),
+  const [nobitexToman, wallexToman, iranJsonEnv, archiveNorm] = await Promise.all([
+    fetchTomanPerUsdtNobitex(fetchInit),
+    fetchTomanPerUsdtWallex(fetchInit),
+    fetchIranRatesFromEnv(iranFetchInit),
+    fetchBonbastArchiveRates(fetchInit),
   ]);
 
+  const bonbastArchiveToman = archiveNorm?.tomanPerUsdt ?? null;
+
   const irtMeta = mergeTomanPerUsdtMeta(
-    iranJson,
+    iranJsonEnv,
     iranDisplayOnly,
     nobitexToman,
     wallexToman,
+    bonbastArchiveToman,
     fallbackToman,
   );
+
+  const iranJson = iranJsonEnv ?? archiveNorm;
 
   return { irtMeta, iranJson };
 }

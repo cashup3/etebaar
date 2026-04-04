@@ -147,17 +147,19 @@ export function normalizeIranRatesJson(raw: unknown): NormalizedIranRates | null
   return { tomanPerUsdt, sourceLabel, updatedAt, rows };
 }
 
-export async function fetchIranRatesFromEnv(): Promise<NormalizedIranRates | null> {
+const iranFetchCached: RequestInit = { next: { revalidate: 45 } };
+
+export async function fetchIranRatesFromEnv(fetchInit: RequestInit = iranFetchCached): Promise<NormalizedIranRates | null> {
   const url = process.env.IRAN_RATES_JSON_URL?.trim();
   if (!url) return null;
   try {
     const res = await fetch(url, {
+      ...fetchInit,
       headers: {
         Accept: "application/json",
         "User-Agent": "EtebaarConvert/1.0",
       },
       signal: AbortSignal.timeout(10_000),
-      next: { revalidate: 45 },
     });
     if (!res.ok) return null;
     const j = (await res.json()) as unknown;
