@@ -22,6 +22,7 @@ const FIAT_FLAG_CC: Record<string, string> = {
   SEK: "se",
   NOK: "no",
   INR: "in",
+  PKR: "pk",
   PLN: "pl",
 };
 

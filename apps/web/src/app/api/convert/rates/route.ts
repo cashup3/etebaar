@@ -1,6 +1,7 @@
 import { unstable_noStore as noStore } from "next/cache";
 import { NextResponse } from "next/server";
 import { TOP_USDT_PAIRS } from "@/data/topUsdtPairs";
+import { applyFixedPkrUsdPerUnit, fixedPkrPerIrtFromEnv } from "@/lib/fixedPkrIrt";
 import { getIranAndTomanMeta, rateFetchCached, rateFetchLive } from "@/lib/tomanPerUsdtRef";
 
 /** Cache aggregated rates briefly at the edge (skipped when `?refresh=1`). */
@@ -131,7 +132,7 @@ export async function GET(req: Request) {
     },
     iranOpenMarket: iranOpenMarket ?? undefined,
     note:
-      "Reference rates only. IRT uses IRAN_RATES_JSON_URL when set, else Nobitex USDT/IRT (or Wallex USDT/TMN if Nobitex is unreachable), else FALLBACK_TOMAN_PER_USDT. Fiat via Frankfurter; crypto via Binance USDT. Not for settlement or tax.",
+      "Reference rates only. IRT uses IRAN_RATES_JSON_URL when set, else Nobitex USDT/IRT (or Wallex USDT/TMN if Nobitex is unreachable), else FALLBACK_TOMAN_PER_USDT. Fiat via Frankfurter except PKR (fixed vs IRT per FIXED_PKR_PER_IRT_TOMAN). Crypto via Binance USDT. Not for settlement or tax.",
     refreshedLive: live,
   });
   if (live) {

@@ -153,7 +153,7 @@ export function ConvertClient({ displayFontClass }: ConvertClientProps) {
   const fmtResult = (code: string, v: number) => {
     if (code === "IRT") return nfIrt.format(v);
     if (["BTC", "ETH", "BNB"].includes(code)) return nfDetail.format(v).slice(0, 16);
-    if (["USD", "USDT", "GBP", "EUR", "AED", "GEL"].includes(code))
+    if (["USD", "USDT", "GBP", "EUR", "AED", "GEL", "PKR", "INR", "TRY", "PLN"].includes(code))
       return new Intl.NumberFormat(locale === "fa" ? "fa-IR" : "en-US", { maximumFractionDigits: 6 }).format(v);
     return nfDetail.format(v).slice(0, 14);
   };

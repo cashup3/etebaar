@@ -102,9 +102,6 @@ const enTree = {
     currency: "Currency",
     supportSoon: "Support (coming soon)",
     supportAria: "Support",
-    riskTitle: "Risk warning:",
-    riskBody:
-      "Digital asset prices are volatile. Cryptocurrency trading carries significant risk and is not investment advice. You may lose your entire stake. Only trade with funds you can afford to lose and ensure you understand the products and fees before using any exchange.",
     legalBody:
       "Etebaar is an online cryptocurrency exchange and market analyzer, founded and based in Tbilisi, Georgia. It is not affiliated with other exchange brands. Use official policies, support channels, and disclosures for your jurisdiction.",
     copyright: "All rights reserved.",
@@ -495,9 +492,6 @@ const faTree = {
     currency: "ارز",
     supportSoon: "پشتیبانی (به‌زودی)",
     supportAria: "پشتیبانی",
-    riskTitle: "هشدار ریسک:",
-    riskBody:
-      "قیمت دارایی‌های دیجیتال نوسان دارد. معامله رمزارز ریسک بالایی دارد و مشاوره سرمایه‌گذاری نیست. ممکن است کل سرمایه خود را از دست بدهید. فقط با پولی معامله کنید که توان از دست دادنش را دارید و قبل از استفاده از صرافی، محصولات و کارمزد را بشناسید.",
     legalBody:
       "اعتبار (Etebaar) یک صرافی آنلاین و تحلیل‌گر قیمت رمزارز است که در تفلیس، گرجستان بنیان‌گذاری و مستقر شده است. وابسته به سایر برندهای صرافی نیست. برای حوزه قضایی خود از سیاست‌ها، پشتیبانی و افشاهای رسمی استفاده کنید.",
     copyright: "تمام حقوق محفوظ است.",

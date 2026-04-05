@@ -175,11 +175,7 @@ export function Footer() {
         </div>
 
         <div className="mt-14 border-t border-[var(--landing-border)] pt-8">
-          <p className="text-[11px] leading-relaxed text-[var(--landing-muted)]">
-            <strong className="font-medium text-[var(--landing-text)]">{t("footer.riskTitle")}</strong>{" "}
-            {t("footer.riskBody")}
-          </p>
-          <p className="mt-4 text-[11px] leading-relaxed text-[var(--landing-muted)]">{t("footer.legalBody")}</p>
+          <p className="text-[11px] leading-relaxed text-[var(--landing-muted)]">{t("footer.legalBody")}</p>
         </div>
 
         <div className="mt-8 flex flex-col gap-3 border-t border-[var(--landing-border)] pt-6 sm:flex-row sm:items-center sm:justify-between">

@@ -14,5 +14,6 @@ export const FIAT_WIDGET_ORDER = [
   "SEK",
   "NOK",
   "INR",
+  "PKR",
   "PLN",
 ] as const;

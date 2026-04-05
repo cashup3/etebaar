@@ -16,7 +16,7 @@ export async function GET(req: Request) {
   const code = (searchParams.get("code") ?? "").trim().toUpperCase();
   const days = Math.min(366, Math.max(14, Number.parseInt(searchParams.get("days") ?? "120", 10) || 120));
 
-  if (!code || code === "IRT") {
+  if (!code || code === "IRT" || code === "PKR") {
     return NextResponse.json({ points: [], reason: "no_fx_history" as const });
   }
 
