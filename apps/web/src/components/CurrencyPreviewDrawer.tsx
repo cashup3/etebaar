@@ -5,7 +5,7 @@ import { useEffect, useMemo } from "react";
 import { CurrencyIcon } from "@/components/CurrencyIcon";
 import { FiatFxChart } from "@/components/markets/FiatFxChart";
 import { useLocale } from "@/i18n/LocaleProvider";
-import { formatToman } from "@/lib/formatToman";
+import { formatToman, formatTomanPerFiatUnit } from "@/lib/formatToman";
 
 export type FiatPreviewRow = {
   code: string;
@@ -83,7 +83,7 @@ export function CurrencyPreviewDrawer({
           <div className="flex flex-wrap items-baseline justify-between gap-2">
             <div>
               <span className="text-2xl font-semibold tabular-nums text-[var(--text)]">
-                {formatToman(Math.round(row.tomanPerUnit), locale)}
+                {formatTomanPerFiatUnit(row.tomanPerUnit, locale)}
               </span>
               <span className="mt-0.5 block text-[10px] text-[var(--muted-dim)]">{t("markets.fiatTomanPerUnit")}</span>
             </div>

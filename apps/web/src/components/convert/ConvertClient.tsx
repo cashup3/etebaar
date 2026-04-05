@@ -65,7 +65,10 @@ export function ConvertClient({ displayFontClass }: ConvertClientProps) {
   const [tab, setTab] = useState<ConvertTab>("fiat");
   const [from, setFrom] = useState("USD");
   const [to, setTo] = useState("IRT");
-  const [amountIn, setAmountIn] = useState("100");
+  /** Which side the user last edited — drives the other field’s value. */
+  const [lead, setLead] = useState<"from" | "to">("from");
+  const [fromStr, setFromStr] = useState("100");
+  const [toStr, setToStr] = useState("");
 
   const loadRates = useCallback(async () => {
     setRatesBusy(true);
@@ -108,33 +111,10 @@ export function ConvertClient({ displayFontClass }: ConvertClientProps) {
       tab === "fiat" ? pickDefaultFiatPair(tabCodes) : pickDefaultCryptoPair(tabCodes);
     setFrom(f);
     setTo(t0);
-    setAmountIn(tab === "fiat" ? "100" : "1");
+    setLead("from");
+    setFromStr(tab === "fiat" ? "100" : "1");
+    setToStr("");
   }, [tab, data, tabCodes, from, to]);
-
-  const swap = useCallback(() => {
-    const prevFrom = from;
-    const prevTo = to;
-    setFrom(prevTo);
-    setTo(prevFrom);
-    setAmountIn((prev) => {
-      const v = parseAmount(prev);
-      if (!data || v <= 0) return prev;
-      const uf = data.usdPerUnit[prevFrom];
-      const ut = data.usdPerUnit[prevTo];
-      if (!uf || !ut) return prev;
-      const out = (v * uf) / ut;
-      return formatOut(prevTo, out);
-    });
-  }, [from, to, data]);
-
-  const outVal = useMemo(() => {
-    if (!data) return 0;
-    const amt = parseAmount(amountIn);
-    const uf = data.usdPerUnit[from];
-    const ut = data.usdPerUnit[to];
-    if (!amt || !uf || !ut) return 0;
-    return (amt * uf) / ut;
-  }, [data, amountIn, from, to]);
 
   const nfDetail = useMemo(
     () =>
@@ -150,13 +130,79 @@ export function ConvertClient({ displayFontClass }: ConvertClientProps) {
     [locale],
   );
 
-  const fmtResult = (code: string, v: number) => {
-    if (code === "IRT") return nfIrt.format(v);
-    if (["BTC", "ETH", "BNB"].includes(code)) return nfDetail.format(v).slice(0, 16);
-    if (["USD", "USDT", "GBP", "EUR", "AED", "GEL", "PKR", "INR", "TRY", "PLN"].includes(code))
-      return new Intl.NumberFormat(locale === "fa" ? "fa-IR" : "en-US", { maximumFractionDigits: 6 }).format(v);
-    return nfDetail.format(v).slice(0, 14);
-  };
+  const fmtResult = useCallback(
+    (code: string, v: number) => {
+      if (code === "IRT") return nfIrt.format(v);
+      if (["BTC", "ETH", "BNB"].includes(code)) return nfDetail.format(v).slice(0, 16);
+      if (["USD", "USDT", "GBP", "EUR", "AED", "GEL", "INR", "TRY", "PLN"].includes(code))
+        return new Intl.NumberFormat(locale === "fa" ? "fa-IR" : "en-US", { maximumFractionDigits: 6 }).format(v);
+      if (code === "PKR")
+        return new Intl.NumberFormat(locale === "fa" ? "fa-IR" : "en-US", {
+          maximumFractionDigits: 2,
+          minimumFractionDigits: 0,
+          notation: Math.abs(v) > 0 && Math.abs(v) < 0.01 ? "scientific" : "standard",
+        }).format(v);
+      return nfDetail.format(v).slice(0, 14);
+    },
+    [locale, nfDetail, nfIrt],
+  );
+
+  useEffect(() => {
+    if (!data) return;
+    const uf = data.usdPerUnit[from];
+    const ut = data.usdPerUnit[to];
+    if (!Number.isFinite(uf) || !Number.isFinite(ut) || uf <= 0 || ut <= 0) return;
+
+    if (lead === "from") {
+      const raw = fromStr.replace(/,/g, "").replace(/\s/g, "").trim();
+      if (!raw) {
+        setToStr("");
+        return;
+      }
+      const amt = parseAmount(fromStr);
+      if (!Number.isFinite(amt) || amt < 0) {
+        setToStr("");
+        return;
+      }
+      const out = (amt * uf) / ut;
+      const next = fmtResult(to, out);
+      setToStr((prev) => (prev === next ? prev : next));
+    } else {
+      const raw = toStr.replace(/,/g, "").replace(/\s/g, "").trim();
+      if (!raw) {
+        setFromStr("");
+        return;
+      }
+      const amt = parseAmount(toStr);
+      if (!Number.isFinite(amt) || amt < 0) {
+        setFromStr("");
+        return;
+      }
+      const inv = (amt * ut) / uf;
+      const next = fmtResult(from, inv);
+      setFromStr((prev) => (prev === next ? prev : next));
+    }
+  }, [data, from, to, lead, fromStr, toStr, fmtResult]);
+
+  const swap = useCallback(() => {
+    if (!data) return;
+    const prevFrom = from;
+    const prevTo = to;
+    const uf = data.usdPerUnit[prevFrom];
+    const ut = data.usdPerUnit[prevTo];
+    if (!Number.isFinite(uf) || !Number.isFinite(ut) || uf <= 0 || ut <= 0) return;
+    const v =
+      lead === "from"
+        ? parseAmount(fromStr)
+        : (parseAmount(toStr) * ut) / uf;
+    if (!Number.isFinite(v) || v < 0) return;
+    const out = (v * uf) / ut;
+    setFrom(prevTo);
+    setTo(prevFrom);
+    setLead("from");
+    setFromStr(fmtResult(prevTo, out));
+    setToStr(fmtResult(prevFrom, v));
+  }, [from, to, data, lead, fromStr, toStr, fmtResult]);
 
   const titleFont = displayFontClass ?? "";
 
@@ -250,9 +296,11 @@ export function ConvertClient({ displayFontClass }: ConvertClientProps) {
           </button>
         </div>
 
+        <p className="mt-4 text-center text-[13px] leading-relaxed text-[var(--muted)] sm:text-sm">{t("convertPage.typeEither")}</p>
+
         <div
           role="tabpanel"
-          className={`mt-6 rounded-[1.75rem] border p-7 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.28)] sm:p-9 ${ratesBusy && !data ? "opacity-60" : ""} `}
+          className={`mt-5 rounded-[1.75rem] border p-7 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.28)] sm:p-9 ${ratesBusy && !data ? "opacity-60" : ""} `}
           style={{
             borderColor: "color-mix(in srgb, var(--text) 9%, var(--border))",
             background: "color-mix(in srgb, var(--panel) 92%, var(--bg))",
@@ -273,8 +321,12 @@ export function ConvertClient({ displayFontClass }: ConvertClientProps) {
                   <input
                     type="text"
                     inputMode="decimal"
-                    value={amountIn}
-                    onChange={(e) => setAmountIn(e.target.value)}
+                    value={fromStr}
+                    onFocus={() => setLead("from")}
+                    onChange={(e) => {
+                      setLead("from");
+                      setFromStr(e.target.value);
+                    }}
                     className="min-w-0 flex-1 bg-transparent py-3 text-2xl font-medium tracking-tight text-[var(--text)] outline-none placeholder:text-[var(--muted-dim)]"
                     placeholder="0"
                     aria-label={t("convertPage.amount")}
@@ -309,7 +361,10 @@ export function ConvertClient({ displayFontClass }: ConvertClientProps) {
                     <button
                       key={p}
                       type="button"
-                      onClick={() => setAmountIn(p)}
+                      onClick={() => {
+                        setLead("from");
+                        setFromStr(p);
+                      }}
                       className="rounded-full px-4 py-2 text-xs font-medium text-[var(--muted)] transition-colors duration-200 hover:text-[var(--text)]"
                       style={{
                         background: "color-mix(in srgb, var(--bg-elevated) 100%, transparent)",
@@ -345,18 +400,30 @@ export function ConvertClient({ displayFontClass }: ConvertClientProps) {
                 {t("convertPage.to")}
               </label>
               <div
-                className="flex min-h-[4.5rem] items-center gap-3 rounded-2xl px-4 py-3 sm:gap-4 sm:px-5"
+                className="flex flex-col gap-3 rounded-2xl px-3 py-2 sm:flex-row sm:items-stretch sm:px-4 sm:py-3"
                 style={{
                   background: "color-mix(in srgb, var(--bg-elevated) 100%, transparent)",
                   boxShadow: "0 0 0 1px var(--border)",
                 }}
               >
-                <CurrencyIcon code={to} size={36} className="shrink-0 opacity-95 ring-1 ring-[color-mix(in_srgb,var(--text)_12%,transparent)]" />
-                <p
-                  className={`min-w-0 flex-1 text-2xl font-semibold tracking-tight text-[var(--text)] tabular-nums sm:text-[1.65rem] ${ratesBusy ? "opacity-45" : ""}`}
-                >
-                  {data ? fmtResult(to, outVal) : "—"}
-                </p>
+                <div className="flex min-h-[3.25rem] min-w-0 flex-1 items-center gap-3 sm:gap-4">
+                  <div className="flex shrink-0 items-center ps-0.5">
+                    <CurrencyIcon code={to} size={36} className="opacity-95 ring-1 ring-[color-mix(in_srgb,var(--text)_12%,transparent)]" />
+                  </div>
+                  <input
+                    type="text"
+                    inputMode="decimal"
+                    value={toStr}
+                    onFocus={() => setLead("to")}
+                    onChange={(e) => {
+                      setLead("to");
+                      setToStr(e.target.value);
+                    }}
+                    className={`min-w-0 flex-1 bg-transparent py-2 text-2xl font-semibold tracking-tight text-[var(--text)] tabular-nums outline-none placeholder:text-[var(--muted-dim)] sm:py-3 sm:text-[1.65rem] ${ratesBusy ? "opacity-45" : ""}`}
+                    placeholder={data ? "0" : "—"}
+                    aria-label={t("convertPage.resultAmount")}
+                  />
+                </div>
                 <select
                   value={to}
                   onChange={(e) => {
@@ -367,7 +434,11 @@ export function ConvertClient({ displayFontClass }: ConvertClientProps) {
                       if (alt) setFrom(alt);
                     }
                   }}
-                  className="max-w-[6.5rem] shrink-0 cursor-pointer border-0 bg-transparent py-1 text-sm font-medium text-[var(--muted)] outline-none"
+                  className="w-full shrink-0 cursor-pointer rounded-xl border-0 px-3 py-2.5 text-sm font-medium text-[var(--text)] outline-none sm:w-[8.5rem] sm:self-center"
+                  style={{
+                    background: "color-mix(in srgb, var(--panel) 88%, var(--border))",
+                    boxShadow: "0 0 0 1px var(--border)",
+                  }}
                 >
                   {tabCodes.map((c) => (
                     <option key={c} value={c}>
@@ -393,10 +464,4 @@ export function ConvertClient({ displayFontClass }: ConvertClientProps) {
       </div>
     </div>
   );
-}
-
-function formatOut(code: string, v: number): string {
-  if (code === "IRT") return String(Math.round(v));
-  if (v >= 1) return v.toFixed(6).replace(/\.?0+$/, "");
-  return v.toFixed(8).replace(/\.?0+$/, "");
 }

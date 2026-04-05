@@ -289,6 +289,8 @@ const enTree = {
     refreshing: "Refreshing…",
     tabFiat: "Currencies",
     tabCrypto: "Cryptos",
+    typeEither: "Type in either field — the other updates from live reference rates.",
+    resultAmount: "Result",
   },
   mBanner: {
     tradeTitle: "Markets never sleep — neither does your workspace",
@@ -679,6 +681,8 @@ const faTree = {
     refreshing: "در حال به‌روزرسانی…",
     tabFiat: "ارزها",
     tabCrypto: "رمزارزها",
+    typeEither: "در هر دو فیلد می‌توانید بنویسید — طرف دیگر از نرخ مرجع به‌روز می‌شود.",
+    resultAmount: "نتیجه",
   },
   mBanner: {
     tradeTitle: "بازارها نمی‌خوابند — فضای کاری شما هم نه",

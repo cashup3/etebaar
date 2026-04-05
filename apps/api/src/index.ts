@@ -10,6 +10,8 @@ import { registerWithdrawalRoutes } from "./routes/withdrawals.js";
 import { registerOrderRoutes } from "./routes/orders.js";
 import { registerAuthRoutes } from "./routes/auth.js";
 import { registerMarketRoutes } from "./routes/market.js";
+import { registerInternalFxOverrideRoutes } from "./routes/internalFxOverrides.js";
+import { registerAdminRoutes } from "./routes/admin.js";
 import { registerWs } from "./ws.js";
 
 async function main() {
@@ -48,6 +50,8 @@ async function main() {
   await registerDepositRoutes(app);
   await registerWithdrawalRoutes(app);
   await registerOrderRoutes(app);
+  await registerInternalFxOverrideRoutes(app);
+  await registerAdminRoutes(app);
 
   app.get("/markets/:symbol/book", async (req, reply) => {
     const symbol = (req.params as { symbol: string }).symbol.toUpperCase();

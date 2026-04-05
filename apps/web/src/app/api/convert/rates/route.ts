@@ -1,7 +1,8 @@
 import { unstable_noStore as noStore } from "next/cache";
 import { NextResponse } from "next/server";
 import { TOP_USDT_PAIRS } from "@/data/topUsdtPairs";
-import { applyFixedPkrUsdPerUnit, fixedPkrPerIrtFromEnv } from "@/lib/fixedPkrIrt";
+import { mergeFxOverridesFromApi } from "@/lib/apiFxOverrides";
+import { applyFixedPkrUsdPerUnit, repairPkrUsdPerUnit, tomanPerOnePkrFromEnv } from "@/lib/fixedPkrIrt";
 import { getIranAndTomanMeta, rateFetchCached, rateFetchLive } from "@/lib/tomanPerUsdtRef";
 
 /** Cache aggregated rates briefly at the edge (skipped when `?refresh=1`). */
@@ -98,6 +99,15 @@ export async function GET(req: Request) {
     if (typeof u === "number" && Number.isFinite(u) && u > 0) usdPerUnit[base] = u;
   }
 
+  applyFixedPkrUsdPerUnit(usdPerUnit, tomanPerOnePkrFromEnv());
+  await mergeFxOverridesFromApi(usdPerUnit);
+  repairPkrUsdPerUnit(usdPerUnit);
+
+  const isValidRate = (c: string): boolean => {
+    const v = usdPerUnit[c];
+    return typeof v === "number" && Number.isFinite(v) && v > 0;
+  };
+
   const fiatCodes = [
     "IRT",
     "USD",
@@ -114,10 +124,11 @@ export async function GET(req: Request) {
     "SEK",
     "NOK",
     "INR",
+    "PKR",
     "PLN",
-  ].filter((c) => usdPerUnit[c] != null);
+  ].filter(isValidRate);
   const cryptoCodes = CRYPTO_PAIRS.map((p) => p.replace("USDT", "")).filter(
-    (b) => usdPerUnit[b] != null && !fiatCodes.includes(b),
+    (b) => isValidRate(b) && !fiatCodes.includes(b),
   );
 
   const res = NextResponse.json({
@@ -132,7 +143,7 @@ export async function GET(req: Request) {
     },
     iranOpenMarket: iranOpenMarket ?? undefined,
     note:
-      "Reference rates only. IRT uses IRAN_RATES_JSON_URL when set, else Nobitex USDT/IRT (or Wallex USDT/TMN if Nobitex is unreachable), else FALLBACK_TOMAN_PER_USDT. Fiat via Frankfurter except PKR (fixed vs IRT per FIXED_PKR_PER_IRT_TOMAN). Crypto via Binance USDT. Not for settlement or tax.",
+      "Reference rates only. IRT uses IRAN_RATES_JSON_URL when set, else Nobitex USDT/IRT (or Wallex USDT/TMN if Nobitex is unreachable), else FALLBACK_TOMAN_PER_USDT. Fiat via Frankfurter except PKR (fixed: 1 PKR = N IRT per FIXED_TOMAN_PER_PKR, default 538). Crypto via Binance USDT. Optional admin FX overrides from API (INTERNAL_API_SECRET + API_ORIGIN). Not for settlement or tax.",
     refreshedLive: live,
   });
   if (live) {

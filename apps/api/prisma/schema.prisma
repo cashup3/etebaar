@@ -146,3 +146,12 @@ model Withdrawal {
 
   @@index([userId, createdAt])
 }
+
+/// Manual USD-per-1-unit overrides for the public convert UI (merged after live feeds). Same unit as Next.js `usdPerUnit`.
+model AdminFxOverride {
+  currencyCode String   @id
+  usdPerUnit   Decimal  @db.Decimal(36, 18)
+  note         String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}

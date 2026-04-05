@@ -94,7 +94,7 @@ export function HomeCurrencyCalculator({
       if (!usdPerUnit || v <= 0) return prev;
       const uf = usdPerUnit[prevFrom];
       const ut = usdPerUnit[prevTo];
-      if (!uf || !ut) return prev;
+      if (!Number.isFinite(uf) || !Number.isFinite(ut) || uf <= 0 || ut <= 0) return prev;
       const out = (v * uf) / ut;
       return formatOutForSwap(prevTo, out);
     });
@@ -105,7 +105,8 @@ export function HomeCurrencyCalculator({
     const amt = parseAmount(amountIn);
     const uf = usdPerUnit[from];
     const ut = usdPerUnit[to];
-    if (!amt || !uf || !ut) return { outVal: 0, invRate: null, midUsd: null };
+    if (!amt || !Number.isFinite(uf) || !Number.isFinite(ut) || uf <= 0 || ut <= 0)
+      return { outVal: 0, invRate: null, midUsd: null };
     const usd = amt * uf;
     const out = usd / ut;
     return { outVal: out, invRate: ut / uf, midUsd: usd };

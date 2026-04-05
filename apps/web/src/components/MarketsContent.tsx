@@ -9,7 +9,7 @@ import { MarketingBanner } from "@/components/landing/MarketingBanner";
 import { MarketPreviewDrawer, type PreviewTicker } from "@/components/MarketPreviewDrawer";
 import { useLocale } from "@/i18n/LocaleProvider";
 import { FIAT_WIDGET_ORDER } from "@/data/fiatWidgetOrder";
-import { formatToman } from "@/lib/formatToman";
+import { formatToman, formatTomanPerFiatUnit } from "@/lib/formatToman";
 import { pairBaseAsset } from "@/lib/marketSymbol";
 
 type Ticker = PreviewTicker;
@@ -301,7 +301,7 @@ export function MarketsContent() {
                     </td>
                     <td className="px-3 py-2.5 text-[var(--text)]">
                       <span className="block font-semibold tabular-nums">
-                        {formatToman(Math.round(r.tomanPerUnit), locale)}
+                        {formatTomanPerFiatUnit(r.tomanPerUnit, locale)}
                       </span>
                       <span className="mt-0.5 block text-[10px] text-[var(--muted-dim)]">{t("home.fiatHint")}</span>
                     </td>

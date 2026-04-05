@@ -9,7 +9,7 @@ import { TrustReserveSection } from "@/components/landing/TrustReserveSection";
 import { CryptoIcon } from "@/components/CryptoIcon";
 import { CurrencyIcon } from "@/components/CurrencyIcon";
 import { useLocale } from "@/i18n/LocaleProvider";
-import { formatToman } from "@/lib/formatToman";
+import { formatToman, formatTomanPerFiatUnit } from "@/lib/formatToman";
 import { pairBaseAsset } from "@/lib/marketSymbol";
 import { FIAT_WIDGET_ORDER } from "@/data/fiatWidgetOrder";
 import { TOP_USDT_PAIRS } from "@/data/topUsdtPairs";
@@ -352,7 +352,7 @@ export function HomeLanding() {
                           </div>
                           <div className="text-end">
                             <p className="text-sm font-medium tabular-nums text-[var(--landing-text)]">
-                              {formatToman(Math.round(row.tomanPerUnit), locale)}
+                              {formatTomanPerFiatUnit(row.tomanPerUnit, locale)}
                             </p>
                             <p className="text-[10px] tabular-nums text-[var(--landing-muted)]">{t("home.fiatHint")}</p>
                             <p className="text-xs font-medium tabular-nums text-[var(--landing-muted)]">—</p>
